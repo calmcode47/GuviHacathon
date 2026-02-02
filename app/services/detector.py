@@ -1,7 +1,8 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List
 
 import numpy as np
 import librosa
+from app.utils.audio import PCMDecodeResult
 
 # Heuristic classifier based on audio features
 
@@ -121,3 +122,125 @@ def classify(features: Dict[str, float]) -> Tuple[str, float, str]:
     explanation = ", ".join(drivers)
 
     return classification, float(np.clip(confidence, 0.0, 1.0)), explanation
+
+
+def _frame_params(sr: int) -> Tuple[int, int, int]:
+    fl = max(1, int(round(sr * 0.032)))
+    hl = max(1, int(round(sr * 0.010)))
+    n_fft = 1
+    while n_fft < fl:
+        n_fft <<= 1
+    return fl, hl, n_fft
+
+
+def _circular_resultant(phases: np.ndarray) -> float:
+    c = float(np.mean(np.cos(phases)))
+    s = float(np.mean(np.sin(phases)))
+    r = float(np.sqrt(c * c + s * s))
+    return r
+
+
+def _entropy_norm(x: np.ndarray) -> float:
+    x = x[np.isfinite(x)]
+    if x.size == 0:
+        return 0.0
+    x = np.maximum(x, 0.0)
+    s = float(np.sum(x)) + 1e-12
+    p = x / s
+    h = float(-np.sum(p * np.log(p + 1e-12)))
+    h_max = float(np.log(max(1, p.size)))
+    return h / (h_max + 1e-12)
+
+
+def _iqr(x: np.ndarray) -> float:
+    x = x[np.isfinite(x)]
+    if x.size == 0:
+        return 0.0
+    q75 = float(np.percentile(x, 75))
+    q25 = float(np.percentile(x, 25))
+    return q75 - q25
+
+
+def _pause_lengths(rms: np.ndarray) -> List[int]:
+    thr = float(np.percentile(rms, 20))
+    mask = rms <= thr
+    lengths = []
+    count = 0
+    for v in mask:
+        if v:
+            count += 1
+        elif count > 0:
+            lengths.append(count)
+            count = 0
+    if count > 0:
+        lengths.append(count)
+    return lengths
+
+
+def _per_channel_features(y_ch: np.ndarray, sr: int) -> Dict[str, float]:
+    fl, hl, n_fft = _frame_params(sr)
+    y_f = y_ch.astype(np.float32) / 32768.0
+    f0 = librosa.yin(y_f, fmin=50, fmax=500, sr=sr, frame_length=fl, hop_length=hl)
+    f0_clean = f0[np.isfinite(f0)]
+    if f0_clean.size > 5:
+        jitter = float(np.median(np.abs(np.diff(f0_clean))) / (np.median(f0_clean) + 1e-8))
+    else:
+        jitter = 0.0
+    pitch_var = float(np.std(f0[np.isfinite(f0)])) if np.any(np.isfinite(f0)) else 0.0
+    S = librosa.stft(y=y_f, n_fft=n_fft, hop_length=hl)
+    mag = np.abs(S)
+    rms = librosa.feature.rms(S=mag)[0]
+    energy_var = float(np.std(rms))
+    flat = librosa.feature.spectral_flatness(S=mag)[0]
+    flat_mean = float(np.mean(flat))
+    roll = librosa.feature.spectral_rolloff(S=mag, sr=sr, roll_percent=0.85)[0]
+    roll_median = float(np.median(roll))
+    phi = np.angle(S)
+    pc = np.array([_circular_resultant(phi[:, t]) for t in range(phi.shape[1])], dtype=np.float32)
+    phase_coh_median = float(np.median(pc))
+    y_h, y_p = librosa.effects.hpss(y_f)
+    h_energy = float(np.sum(y_h ** 2))
+    total_energy = float(np.sum(y_f ** 2)) + 1e-8
+    hnr = h_energy / total_energy
+    onset_env = librosa.onset.onset_strength(y=y_f, sr=sr, hop_length=hl)
+    if onset_env.size > 1:
+        d_on = np.abs(np.diff(onset_env))
+        thr = float(np.percentile(d_on, 90))
+        temporal_rate = float(np.mean(d_on > thr))
+    else:
+        temporal_rate = 0.0
+    ent = _entropy_norm(rms)
+    pauses = _pause_lengths(rms)
+    pause_std = float(np.std(pauses)) if len(pauses) > 0 else 0.0
+    voiced_ratio = float(f0_clean.size) / float(f0.size + 1e-8)
+    return {
+        "pitch_var": pitch_var,
+        "jitter_proxy": jitter,
+        "hnr_ratio": hnr,
+        "spectral_flatness_mean": flat_mean,
+        "spectral_rolloff_median": roll_median,
+        "phase_coherence_median": phase_coh_median,
+        "energy_entropy_norm": ent,
+        "temporal_discontinuity_rate": temporal_rate,
+        "prosody_pause_std": pause_std,
+        "prosody_f0_var_median": pitch_var,
+        "voiced_ratio": voiced_ratio,
+    }
+
+
+def extract_features_pcm(pcm: PCMDecodeResult) -> Dict[str, float]:
+    sr = pcm.sample_rate
+    ch = pcm.channels
+    feats = []
+    for ci in range(ch):
+        y_ch = pcm.waveform_int16[ci]
+        feats.append(_per_channel_features(y_ch, sr))
+    keys = list(feats[0].keys()) if feats else []
+    agg = {}
+    for k in keys:
+        vals = np.array([f[k] for f in feats], dtype=np.float32)
+        agg[k] = float(np.median(vals))
+        agg[k + "_iqr"] = float(_iqr(vals))
+        agg[k + "_p05"] = float(np.percentile(vals, 5))
+        agg[k + "_p95"] = float(np.percentile(vals, 95))
+    return agg

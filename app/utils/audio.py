@@ -7,6 +7,8 @@ from typing import Tuple
 
 import numpy as np
 import librosa
+import audioread
+from dataclasses import dataclass
 
 from app.core.config import SUPPORTED_LANGUAGES, MAX_AUDIO_BYTES, MAX_DURATION_SECONDS
 
@@ -100,8 +102,6 @@ def load_audio_waveform(mp3_path: str) -> Tuple[np.ndarray, int]:
                 pass
 
     duration = float(len(y)) / float(sr)
-    if duration < 0.5:
-        raise ValueError("Audio too short for reliable analysis")
     if duration > MAX_DURATION_SECONDS:
         raise ValueError(f"Audio too long; max {MAX_DURATION_SECONDS} seconds")
 
@@ -115,3 +115,83 @@ def cleanup_temp_file(path: str) -> None:
     except Exception:
         # Non-fatal cleanup failure
         pass
+
+
+@dataclass
+class PCMDecodeResult:
+    waveform_int16: np.ndarray
+    sample_rate: int
+    channels: int
+    duration_seconds: float
+    format_valid: bool
+    sample_rate_suspect: bool
+    short_audio: bool
+
+
+def _read_mp3_pcm_with_audioread(mp3_path: str) -> Tuple[np.ndarray, int, int]:
+    with audioread.audio_open(mp3_path) as f:
+        sr = int(f.samplerate)
+        ch = int(f.channels)
+        pcm_chunks = []
+        for buf in f:
+            pcm_chunks.append(np.frombuffer(buf, dtype=np.int16))
+        if not pcm_chunks:
+            raise ValueError("Empty audio data")
+        pcm = np.concatenate(pcm_chunks)
+        if ch > 1:
+            frames = pcm.reshape(-1, ch)
+            frames = frames.T
+        else:
+            frames = pcm.reshape(1, -1)
+        return frames, sr, ch
+
+
+def decode_base64_mp3_to_pcm(audio_base64: str) -> PCMDecodeResult:
+    try:
+        audio_bytes = base64.b64decode(audio_base64, validate=True)
+    except Exception as e:
+        raise ValueError("Invalid base64 audio") from e
+    if len(audio_bytes) > MAX_AUDIO_BYTES:
+        raise ValueError(f"Audio file too large; max {MAX_AUDIO_BYTES} bytes")
+    header_ok = _has_mp3_magic_header(audio_bytes)
+    fd, temp_path = tempfile.mkstemp(suffix=".mp3")
+    try:
+        with os.fdopen(fd, "wb") as f:
+            f.write(audio_bytes)
+        try:
+            frames, sr, ch = _read_mp3_pcm_with_audioread(temp_path)
+        except Exception as e:
+            raise RuntimeError("Failed to decode MP3") from e
+        duration = float(frames.shape[1]) / float(sr)
+        sr_suspect = not (8000 <= sr <= 48000)
+        return PCMDecodeResult(
+            waveform_int16=frames,
+            sample_rate=sr,
+            channels=ch,
+            duration_seconds=duration,
+            format_valid=header_ok,
+            sample_rate_suspect=sr_suspect,
+            short_audio=duration < 1.0,
+        )
+    finally:
+        try:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+        except Exception:
+            pass
+
+
+def read_mp3_to_pcm_result(mp3_path: str) -> PCMDecodeResult:
+    frames, sr, ch = _read_mp3_pcm_with_audioread(mp3_path)
+    duration = float(frames.shape[1]) / float(sr)
+    header_ok = True
+    sr_suspect = not (8000 <= sr <= 48000)
+    return PCMDecodeResult(
+        waveform_int16=frames,
+        sample_rate=sr,
+        channels=ch,
+        duration_seconds=duration,
+        format_valid=header_ok,
+        sample_rate_suspect=sr_suspect,
+        short_audio=duration < 1.0,
+    )
