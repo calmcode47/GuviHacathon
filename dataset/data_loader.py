@@ -77,7 +77,7 @@ class VoiceDataset:
                 feats.append(np.zeros(len(FEATURE_NAMES), dtype=np.float32))
         X = np.vstack(feats) if feats else np.zeros((0, len(FEATURE_NAMES)), dtype=np.float32)
         y = np.array(self.labels, dtype=np.int32)
-        langs = np.array(self.langs, dtype=np.unicode_)
+        langs = np.array(self.langs, dtype=np.str_)
         np.savez(cache_path, X=X, y=y, langs=langs)
         return X, y, langs
 
@@ -103,11 +103,14 @@ class VoiceDataset:
         lf = langs[idx]
         if val_split + test_split > 0.0:
             X_train, X_tmp, y_train, y_tmp, l_train, l_tmp = train_test_split(Xf, yf, lf, test_size=(val_split + test_split), stratify=yf, random_state=seed)
-            if val_split + test_split > 0:
-                vs = val_split / (val_split + test_split) if (val_split + test_split) > 0 else 0.5
+            if test_split <= 1e-8:
+                X_val, y_val, l_val = X_tmp, y_tmp, l_tmp
+                X_test = np.empty((0, Xf.shape[1]))
+                y_test = np.empty((0,), dtype=yf.dtype)
+                l_test = np.empty((0,), dtype=l_train.dtype)
             else:
-                vs = 0.5
-            X_val, X_test, y_val, y_test, l_val, l_test = train_test_split(X_tmp, y_tmp, l_tmp, test_size=(1.0 - vs), stratify=y_tmp, random_state=seed)
+                vs = val_split / (val_split + test_split)
+                X_val, X_test, y_val, y_test, l_val, l_test = train_test_split(X_tmp, y_tmp, l_tmp, test_size=(1.0 - vs), stratify=y_tmp, random_state=seed)
         else:
             X_train, y_train, l_train = Xf, yf, lf
             X_val, y_val, l_val = np.empty((0, Xf.shape[1])), np.empty((0,), dtype=yf.dtype), np.empty((0,), dtype=l_train.dtype)
