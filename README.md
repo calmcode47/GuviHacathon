@@ -97,6 +97,21 @@ app/
   models/schemas.py    # Pydantic request/response models
   utils/audio.py       # Base64 decoding, MP3 load helpers (ffmpeg fallback)
   services/detector.py # Feature extraction & classification logic
+  services/classifier.py # Logistic classifier with model auto-load or embedded weights
+  services/explainer.py  # Deterministic explanation from feature contributions
+
+dataset/
+  README.md                  # Dataset workflow overview
+  data_setup.py              # Create data/{human,ai}/{language}/ structure
+  download_open_datasets.py  # Fetch open human speech (Common Voice) per language
+  generate_ai_samples.py     # Create AI voices via gTTS, Edge-TTS, pyttsx3
+  validate_dataset.py        # Validate MP3s and recommend train/val/test splits
+  normalize_human_samples.py # Normalize filenames and append metadata
+  data_loader.py             # Load/caches features; balanced stratified splits
+  train.py                   # Train logistic model with CV grid + calibration
+  evaluate.py                # Evaluate metrics, ECE, and export plots
+  update_classifier.py       # Embed trained weights into runtime classifier
+  setup_data.sh              # One-shot data creation/generation/validation
 ```
 
 ## Security
@@ -125,6 +140,31 @@ app/
 - Input audio is decoded for analysis only; the original content is not modified.
 - Language field is validated to be one of the five supported languages.
 - No hard-coded results; classification is determined by computed features.
+
+## Dataset & Training
+- Training dependencies:
+  - pip install -r requirements_training.txt
+- Create directories and metadata:
+  - python dataset/data_setup.py --base-dir data
+- Download open human speech (requires a Hugging Face token):
+  - Set token in shell: $Env:HF_TOKEN="hf_xxx"
+  - python dataset/download_open_datasets.py --base-dir data --max-per-language 60 --versions 13_0 11_0 9_0 7_0
+- Generate AI voices:
+  - python dataset/generate_ai_samples.py --base-dir data --corpus-dir dataset/corpus --samples-per-language 50 --target-sample-rate 22050
+- Validate dataset:
+  - python dataset/validate_dataset.py --base-dir data --report-csv dataset/validation_report.csv --splits-csv dataset/split_recommendations.csv
+- Cache features and splits:
+  - python dataset/data_loader.py --data-dir data --val-split 0.2 --test-split 0.0 --random-seed 42 --balance
+- Train with CV grid and calibration:
+  - python dataset/train.py --data-dir data --output-dir training_out --val-split 0.2 --random-seed 42
+- Evaluate:
+  - python dataset/evaluate.py --data-dir data --weights training_out/weights.pkl --random-seed 42 --output-dir evaluation_out
+- Update runtime classifier:
+  - python dataset/update_classifier.py --weights training_out/weights.pkl --classifier-path app/services/classifier.py
+- Alternative runtime load:
+  - Place a JSON model at app/model/model.json or set MODEL_PATH; the API auto-loads this file if present.
+
+See TRAINING.md for a concise guide with commands and outputs.
 
 ## Sample Base64
 For testing, convert an MP3 file to Base64:
