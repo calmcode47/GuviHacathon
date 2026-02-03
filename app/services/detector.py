@@ -3,6 +3,7 @@ from typing import Dict, Tuple, List
 import numpy as np
 import librosa
 from app.utils.audio import PCMDecodeResult
+from app.core.config import TARGET_SAMPLE_RATE
 
 # Heuristic classifier based on audio features
 
@@ -178,9 +179,12 @@ def _pause_lengths(rms: np.ndarray) -> List[int]:
 
 
 def _per_channel_features(y_ch: np.ndarray, sr: int) -> Dict[str, float]:
-    fl, hl, n_fft = _frame_params(sr)
     y_f = y_ch.astype(np.float32) / 32768.0
-    f0 = librosa.yin(y_f, fmin=50, fmax=500, sr=sr, frame_length=fl, hop_length=hl)
+    if sr > TARGET_SAMPLE_RATE:
+        y_f = librosa.resample(y_f, orig_sr=sr, target_sr=TARGET_SAMPLE_RATE)
+        sr = TARGET_SAMPLE_RATE
+    fl, hl, n_fft = _frame_params(sr)
+    f0 = librosa.yin(y_f, fmin=62.5, fmax=500, sr=sr, frame_length=fl, hop_length=hl)
     f0_clean = f0[np.isfinite(f0)]
     if f0_clean.size > 5:
         jitter = float(np.median(np.abs(np.diff(f0_clean))) / (np.median(f0_clean) + 1e-8))

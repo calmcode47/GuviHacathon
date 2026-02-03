@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Voice Detection Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<h1>Voice Detection Demo</h1>
+<label>API Key <input id="apiKey" type="text" /></label>
+<label>Language
+  <select id="lang">
+    <option>Tamil</option>
+    <option>English</option>
+    <option>Hindi</option>
+    <option>Malayalam</option>
+    <option>Telugu</option>
+  </select>
+</label>
+<input id="file" type="file" accept="audio/mp3" />
+<button id="send">Analyze</button>
+<pre id="out"></pre>
+<script>
+async function toBase64(file) {
+  const buf = await file.arrayBuffer();
+  const bytes = new Uint8Array(buf);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+document.getElementById('send').onclick = async () => {
+  const f = document.getElementById('file').files[0];
+  const key = document.getElementById('apiKey').value;
+  const lang = document.getElementById('lang').value;
+  if (!f || !key) { alert('Select MP3 and enter API key'); return; }
+  const b64 = await toBase64(f);
+  const payload = { language: lang, audioFormat: "mp3", audioBase64: b64 };
+  const r = await fetch('/api/voice-detection', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': key },
+    body: JSON.stringify(payload)
+  });
+  const txt = await r.text();
+  document.getElementById('out').textContent = txt;
+};
+</script>
+</body>
+</html>

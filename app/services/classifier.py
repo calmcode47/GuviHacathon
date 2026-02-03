@@ -3,6 +3,7 @@ import json
 import logging
 import os
 from pathlib import Path
+from app.core.config import HIGH_CONFIDENCE_THRESHOLD, BORDERLINE_MIN_CONFIDENCE
 
 import numpy as np
 
@@ -57,6 +58,8 @@ def classify_features(features: Dict[str, float], pcm: PCMDecodeResult, model: L
     base_conf = p_ai if label == "AI_GENERATED" else (1.0 - p_ai)
     r = compute_reliability(pcm)
     conf = float(np.clip(r * base_conf, 0.0, 1.0))
+    if BORDERLINE_MIN_CONFIDENCE <= conf < HIGH_CONFIDENCE_THRESHOLD:
+        conf = float(conf)
     return label, conf, p_ai
 
 
@@ -103,4 +106,3 @@ def get_default_classifier() -> LogisticClassifier:
     calib_b = 0.0
     logger.warning("Using built-in zero-weight fallback classifier")
     return LogisticClassifier(names, mu, sigma, weights, bias, calib_a, calib_b)
-

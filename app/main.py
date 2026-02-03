@@ -3,15 +3,17 @@ from pathlib import Path
 
 from fastapi import FastAPI, Header
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
-from app.models.schemas import VoiceDetectionRequest, VoiceDetectionResponse, ErrorResponse
-from app.core.config import API_KEY, EXPECTED_AUDIO_FORMAT
+from app.models.schemas import VoiceDetectionRequest, VoiceDetectionResponse, ErrorResponse, BatchVoiceDetectionRequest, BatchVoiceDetectionResponse, ItemResult
+from app.core.config import API_KEY, EXPECTED_AUDIO_FORMAT, HIGH_CONFIDENCE_THRESHOLD, BORDERLINE_MIN_CONFIDENCE
 from app.utils.audio import assert_supported_language, decode_base64_mp3_to_pcm
 from app.services.detector import extract_features_pcm
 from app.services.classifier import get_default_classifier, classify_features
 from app.services.explainer import explain
 
 app = FastAPI(title="AI-Generated Voice Detection API", version="1.0.0")
+app.mount("/demo", StaticFiles(directory="web/demo", html=True), name="demo")
 
 
 @app.get("/health")
@@ -52,6 +54,8 @@ async def voice_detection(request: VoiceDetectionRequest, x_api_key: str = Heade
         model = get_default_classifier()
         label, confidence, _ = classify_features(feats, pcm, model)
         explanation = explain(feats, model, label)
+        if BORDERLINE_MIN_CONFIDENCE <= confidence < HIGH_CONFIDENCE_THRESHOLD:
+            explanation = "Borderline case; " + explanation
 
         return VoiceDetectionResponse(
             status="success",
@@ -65,3 +69,39 @@ async def voice_detection(request: VoiceDetectionRequest, x_api_key: str = Heade
         return JSONResponse(status_code=400, content={"status": "error", "message": str(ve)})
     except Exception:
         return JSONResponse(status_code=500, content={"status": "error", "message": "Failed to analyze audio"})
+
+
+@app.post("/api/voice-detection-batch", response_model=BatchVoiceDetectionResponse, responses={
+    400: {"model": ErrorResponse},
+    401: {"model": ErrorResponse},
+    500: {"model": ErrorResponse},
+})
+async def voice_detection_batch(request: BatchVoiceDetectionRequest, x_api_key: str = Header(default="")):
+    if not x_api_key or x_api_key != API_KEY:
+        return JSONResponse(status_code=401, content={"status": "error", "message": "Invalid API key or malformed request"})
+    out: list[ItemResult] = []
+    model = get_default_classifier()
+    for item in request.items:
+        try:
+            assert_supported_language(item.language)
+            if item.audioFormat.lower() != EXPECTED_AUDIO_FORMAT:
+                out.append(ItemResult(error=ErrorResponse(status="error", message="Unsupported audio format; only mp3 is accepted")))
+                continue
+            pcm = decode_base64_mp3_to_pcm(item.audioBase64)
+            feats = extract_features_pcm(pcm)
+            label, confidence, _ = classify_features(feats, pcm, model)
+            explanation = explain(feats, model, label)
+            if BORDERLINE_MIN_CONFIDENCE <= confidence < HIGH_CONFIDENCE_THRESHOLD:
+                explanation = "Borderline case; " + explanation
+            out.append(ItemResult(result=VoiceDetectionResponse(
+                status="success",
+                language=item.language,
+                classification=label,
+                confidenceScore=round(float(confidence), 4),
+                explanation=explanation,
+            )))
+        except ValueError as ve:
+            out.append(ItemResult(error=ErrorResponse(status="error", message=str(ve))))
+        except Exception:
+            out.append(ItemResult(error=ErrorResponse(status="error", message="Failed to analyze audio")))
+    return BatchVoiceDetectionResponse(results=out)

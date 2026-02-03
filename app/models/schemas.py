@@ -18,3 +18,13 @@ class VoiceDetectionResponse(BaseModel):
 class ErrorResponse(BaseModel):
     status: Literal["error"]
     message: str
+
+class ItemResult(BaseModel):
+    result: VoiceDetectionResponse | None = None
+    error: ErrorResponse | None = None
+
+class BatchVoiceDetectionRequest(BaseModel):
+    items: list[VoiceDetectionRequest]
+
+class BatchVoiceDetectionResponse(BaseModel):
+    results: list[ItemResult]
