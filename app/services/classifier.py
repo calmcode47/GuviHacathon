@@ -1,9 +1,15 @@
 from typing import Dict, List, Tuple
-import numpy as np
-from app.utils.audio import PCMDecodeResult
-import os
 import json
+import logging
+import os
 from pathlib import Path
+
+import numpy as np
+
+from app.utils.audio import PCMDecodeResult
+
+
+logger = logging.getLogger(__name__)
 
 
 class LogisticClassifier:
@@ -71,10 +77,13 @@ def get_default_classifier() -> LogisticClassifier:
             bias = float(obj["bias"])
             calib_a = float(obj.get("calib_a", 1.0))
             calib_b = float(obj.get("calib_b", 0.0))
+            logger.info("Loaded voice classifier model from %s", model_path)
             return LogisticClassifier(names, mu, sigma, weights, bias, calib_a, calib_b)
-        except Exception:
-            pass
-        names = [
+        except Exception as exc:
+            logger.exception("Failed to load classifier model from %s; falling back to default classifier", model_path)
+    else:
+        logger.warning("Model file %s not found; using default zero-weight classifier", model_path)
+    names = [
         "pitch_var",
         "jitter_proxy",
         "hnr_ratio",
@@ -86,11 +95,12 @@ def get_default_classifier() -> LogisticClassifier:
         "prosody_pause_std",
         "voiced_ratio",
     ]
-    mu = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32)
-    sigma = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], dtype=np.float32)
-    weights = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32)
+    mu = np.array([0.0] * len(names), dtype=np.float32)
+    sigma = np.array([1.0] * len(names), dtype=np.float32)
+    weights = np.array([0.0] * len(names), dtype=np.float32)
     bias = 0.0
     calib_a = 0.0
     calib_b = 0.0
+    logger.warning("Using built-in zero-weight fallback classifier")
     return LogisticClassifier(names, mu, sigma, weights, bias, calib_a, calib_b)
 

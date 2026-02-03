@@ -1,19 +1,43 @@
 import base64
 import io
+import logging
 import os
 import subprocess
 import tempfile
+from dataclasses import dataclass
 from typing import Tuple
 
-import numpy as np
-import librosa
 import audioread
-from dataclasses import dataclass
+import librosa
+import numpy as np
 
 from app.core.config import SUPPORTED_LANGUAGES, MAX_AUDIO_BYTES, MAX_DURATION_SECONDS
 
 MP3_MAGIC_HEADERS = [b"ID3", b"\xff\xfb", b"\xff\xf3", b"\xff\xf2"]
 
+
+logger = logging.getLogger(__name__)
+
+
+def _ffmpeg_available() -> bool:
+    """Best-effort check for ffmpeg on PATH."""
+    try:
+        subprocess.run(
+            ["ffmpeg", "-version"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+        return True
+    except FileNotFoundError:
+        return False
+    except Exception:
+        return False
+
+
+_FFMPEG_AVAILABLE = _ffmpeg_available()
+if not _FFMPEG_AVAILABLE:
+    logger.warning("ffmpeg not found on PATH; MP3 fallback decoding via ffmpeg will be unavailable")
 
 def assert_supported_language(language: str) -> None:
     if language not in SUPPORTED_LANGUAGES:
@@ -54,6 +78,10 @@ def _transcode_mp3_to_wav_via_ffmpeg(mp3_path: str) -> str:
 
     Requires ffmpeg available in PATH (bundled in Docker).
     """
+    if not _FFMPEG_AVAILABLE:
+        logger.error("Cannot transcode MP3 to WAV because ffmpeg is not available on PATH")
+        raise RuntimeError("FFmpeg is not available on PATH")
+
     wav_fd, wav_path = tempfile.mkstemp(suffix=".wav")
     os.close(wav_fd)
     try:
@@ -68,6 +96,7 @@ def _transcode_mp3_to_wav_via_ffmpeg(mp3_path: str) -> str:
             mp3_path,
             wav_path,
         ]
+        logger.info("Falling back to ffmpeg to transcode MP3 to WAV: %s", mp3_path)
         subprocess.run(cmd, check=True)
         return wav_path
     except Exception as e:
@@ -77,6 +106,7 @@ def _transcode_mp3_to_wav_via_ffmpeg(mp3_path: str) -> str:
                 os.remove(wav_path)
             except Exception:
                 pass
+        logger.exception("FFmpeg fallback decode failed for %s", mp3_path)
         raise RuntimeError("FFmpeg fallback decode failed") from e
 
 
@@ -91,6 +121,7 @@ def load_audio_waveform(mp3_path: str) -> Tuple[np.ndarray, int]:
         y, sr = librosa.load(mp3_path, sr=None, mono=True)
     except Exception:
         # Fallback to ffmpeg -> WAV -> librosa
+        logger.warning("Primary MP3 decode failed for %s; attempting ffmpeg fallback", mp3_path)
         wav_path = _transcode_mp3_to_wav_via_ffmpeg(mp3_path)
         try:
             y, sr = librosa.load(wav_path, sr=None, mono=True)
@@ -99,7 +130,7 @@ def load_audio_waveform(mp3_path: str) -> Tuple[np.ndarray, int]:
                 if os.path.exists(wav_path):
                     os.remove(wav_path)
             except Exception:
-                pass
+                logger.debug("Failed to delete temporary WAV file %s", wav_path)
 
     duration = float(len(y)) / float(sr)
     if duration > MAX_DURATION_SECONDS:

@@ -10,6 +10,17 @@ A secure FastAPI-based REST API that accepts a Base64-encoded MP3 voice sample a
 - Lightweight heuristic analysis using audio features (no external detection APIs)
 - Cross-platform: macOS, Windows, Linux via Docker
 
+## Minimal Local Run (Summary)
+
+- **Docker (recommended, cross-platform)**:
+  - Build: `docker build -t voice-detector .`
+  - Run: `docker run -e API_KEY=sk_live_your_key -p 8000:8000 voice-detector`
+- **Native Python (macOS/Windows)**:
+  - Create venv (Python 3.10+), activate it.
+  - Install deps: `pip install -r requirements.txt`
+  - Set `API_KEY` in your shell.
+  - Start server: `uvicorn app.main:app --host 0.0.0.0 --port 8000`
+
 ## Quick Start (Docker)
 This is the easiest way to run locally and across platforms.
 
@@ -101,6 +112,15 @@ scripts\setup_env.bat
 }
 ```
 
+## Health & API Documentation
+
+- **Health check**: `GET /health`
+  - Returns `{"status": "ok", "model_loaded": true/false}`.
+  - Useful for readiness probes and simple monitoring.
+- **Interactive docs** (FastAPI built-in):
+  - Open `http://localhost:8000/docs` for Swagger UI.
+  - Open `http://localhost:8000/redoc` for ReDoc.
+
 ## Design Notes
 - Heuristic features: pitch stability (YIN), energy dynamics (RMS), spectral flatness, MFCC temporal variance, harmonic-to-noise ratio (HPR), onset rate.
 - AI voices often have unusually consistent pitch and energy, lower jitter, higher harmonic-to-noise ratios, and stable MFCCs.
@@ -153,6 +173,17 @@ dataset/
   - Ubuntu/Debian: `sudo apt-get install ffmpeg`
   - Windows: install FFmpeg and add to `PATH`.
 
+## Troubleshooting on Windows/macOS
+
+- **Verify ffmpeg is available**:
+  - Run `ffmpeg -version` in your terminal or PowerShell.
+  - If the command is not found, install ffmpeg as described above and restart your shell.
+- **When MP3 decode fails**:
+  - The API first tries native decoders (`audioread`/`librosa`).
+  - On failure, it falls back to ffmpeg and logs a warning like: *\"Primary MP3 decode failed; attempting ffmpeg fallback\"*.
+  - If ffmpeg is missing, a clear error is logged and the request fails with a 500 status.
+- If you run into codec issues or platform-specific audio errors, use the Docker flow, which bundles ffmpeg and a known-good environment.
+
 ## Notes
 - Input audio is decoded for analysis only; the original content is not modified.
 - Language field is validated to be one of the five supported languages.
@@ -180,6 +211,18 @@ dataset/
   - python dataset/update_classifier.py --weights training_out/weights.pkl --classifier-path app/services/classifier.py
 - Alternative runtime load:
   - Place a JSON model at app/model/model.json or set MODEL_PATH; the API auto-loads this file if present.
+
+## Sample Client Script
+
+- A simple cross-platform CLI client is provided at `scripts/upload_mp3_to_api.py`.
+- Example usage:
+  ```bash
+  python scripts/upload_mp3_to_api.py \
+    --file path/to/sample.mp3 \
+    --language Tamil \
+    --api-key sk_live_your_key \
+    --url http://localhost:8000/api/voice-detection
+  ```
 
 See TRAINING.md for a concise guide with commands and outputs.
 

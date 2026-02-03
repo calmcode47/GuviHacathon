@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 from fastapi import FastAPI, Header
 from fastapi.responses import JSONResponse
 
@@ -9,6 +12,20 @@ from app.services.classifier import get_default_classifier, classify_features
 from app.services.explainer import explain
 
 app = FastAPI(title="AI-Generated Voice Detection API", version="1.0.0")
+
+
+@app.get("/health")
+async def health():
+    """Lightweight health check endpoint."""
+    env_path = os.getenv("MODEL_PATH")
+    if env_path:
+        model_path = Path(env_path)
+    else:
+        model_path = Path(__file__).resolve().parents[1] / "model" / "model.json"
+    return {
+        "status": "ok",
+        "model_loaded": model_path.exists(),
+    }
 
 
 @app.post("/api/voice-detection", response_model=VoiceDetectionResponse, responses={
