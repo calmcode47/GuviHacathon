@@ -1,16 +1,16 @@
-# AI-Generated Voice Detection API (Tamil, English, Hindi, Malayalam, Telugu)
+# English Voice Detection API
 
-A secure FastAPI-based REST API that accepts a Base64-encoded MP3 voice sample and classifies whether the voice is AI-generated or Human. Supports five languages: Tamil, English, Hindi, Malayalam, and Telugu.
+A FastAPI-based REST API that accepts a Base64-encoded MP3 voice sample and classifies whether the voice is AI-generated or Human. This deployment is optimized for English audio with calibrated confidence and sub-second latency.
 
 ## Features
-- **Single & Batch Endpoints**: `POST /api/voice-detection` and `POST /api/voice-detection/batch`
+- **Single & Batch Endpoints**: `POST /api/voice-detection` and `POST /api/voice-detection/batch` (English-only)
 - **ML-Powered Detection**: Trained logistic regression model with calibration
 - **Confidence Thresholds**: Low/Medium/High confidence categories for borderline cases
 - **Audio Quality Assessment**: Automatic quality scoring and metrics
 - **Demo Web Interface**: Beautiful, modern UI at `/` for easy testing
 - **Rate Limiting**: Built-in rate limiting (10/min single, 5/min batch)
 - **Security**: Security headers, API key validation, CORS support
-- **Performance**: Optimized for < 2 second response times with model caching
+- **Performance**: Optimized for ~1 second p95 response time with model caching
 - **Logging & Monitoring**: Comprehensive logging and request timing
 - **Production Ready**: Deployment scripts and load testing tools included
 - Cross-platform: macOS, Windows, Linux via Docker
@@ -36,13 +36,12 @@ docker build -t voice-detector .
 docker run -e API_KEY=sk_live_your_key -p 8000:8000 voice-detector
 ```
 
-### Test with cURL
+### Test with cURL (English-only)
 ```bash
 curl -X POST "http://localhost:8000/api/voice-detection" \
   -H "Content-Type: application/json" \
   -H "x-api-key: sk_live_your_key" \
   -d '{
-    "language": "Tamil",
     "audioFormat": "mp3",
     "audioBase64": "<YOUR_BASE64_MP3>"
   }'
@@ -85,14 +84,13 @@ scripts\setup_env.bat
 .venv\Scripts\activate.bat
 ```
 
-## Endpoint Details
+## Endpoint Details (English-only)
 - Method: `POST`
 - Path: `/api/voice-detection`
 - Headers: `x-api-key: <YOUR_SECRET_API_KEY>`
 - Body (JSON):
 ```json
 {
-  "language": "Tamil | English | Hindi | Malayalam | Telugu",
   "audioFormat": "mp3",
   "audioBase64": "<Base64-encoded MP3>"
 }
@@ -102,7 +100,6 @@ scripts\setup_env.bat
 ```json
 {
   "status": "success",
-  "language": "Tamil",
   "classification": "AI_GENERATED",
   "confidenceScore": 0.91,
   "confidenceCategory": "high",
@@ -128,8 +125,11 @@ scripts\setup_env.bat
 ## Health & API Documentation
 
 - **Health check**: `GET /health`
-  - Returns `{"status": "ok", "model_loaded": true/false}`.
+  - Returns `{"status": "healthy", "model_loaded": true/false, "version": "1.0"}`.
   - Useful for readiness probes and simple monitoring.
+- **Info**: `GET /info`
+  - Returns English-only model metrics and notes:
+  - `{"model_version":"1.0","language_support":"English","model_metrics":{"accuracy":1.0,"roc_auc":1.0,"ece":0.0695,"latency_p95_ms":914},"features":"9 acoustic features","note":"Model trained and optimized for English audio"}`
 - **Demo Interface**: `GET /`
   - Beautiful web interface for testing the API interactively
 - **Interactive docs** (FastAPI built-in):
@@ -219,7 +219,7 @@ dataset/
 
 ## Notes
 - Input audio is decoded for analysis only; the original content is not modified.
-- Language field is validated to be one of the five supported languages.
+- English-only model; architecture and features are language-agnostic for future expansion.
 - No hard-coded results; classification is determined by computed features.
 
 ## Dataset & Training
