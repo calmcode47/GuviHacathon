@@ -189,7 +189,7 @@ def _per_channel_features(y_ch: np.ndarray, sr: int) -> Dict[str, float]:
     pitch_var = float(np.std(f0[np.isfinite(f0)])) if np.any(np.isfinite(f0)) else 0.0
     S = librosa.stft(y=y_f, n_fft=n_fft, hop_length=hl)
     mag = np.abs(S)
-    rms = librosa.feature.rms(S=mag)[0]
+    rms = librosa.feature.rms(y=y_f, frame_length=fl, hop_length=hl)[0]
     energy_var = float(np.std(rms))
     flat = librosa.feature.spectral_flatness(S=mag)[0]
     flat_mean = float(np.mean(flat))
