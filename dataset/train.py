@@ -11,7 +11,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold, GridSearchCV, train_test_split
 from sklearn.metrics import accuracy_score, roc_auc_score, confusion_matrix
 from joblib import dump
-from .data_loader import VoiceDataset, FEATURE_NAMES
+from data_loader import VoiceDataset, FEATURE_NAMES
 
 
 def per_language_accuracy(y_true: np.ndarray, y_pred: np.ndarray, langs: np.ndarray) -> Dict[str, float]:

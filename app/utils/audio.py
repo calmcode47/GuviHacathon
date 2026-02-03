@@ -22,14 +22,19 @@ logger = logging.getLogger(__name__)
 def _ffmpeg_available() -> bool:
     """Best-effort check for ffmpeg on PATH."""
     try:
-        subprocess.run(
-            ["ffmpeg", "-version"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            check=False,
-        )
-        return True
-    except FileNotFoundError:
+        # Try common ffmpeg locations
+        ffmpeg_paths = ["ffmpeg", "/opt/homebrew/bin/ffmpeg", "/usr/local/bin/ffmpeg"]
+        for ffmpeg_path in ffmpeg_paths:
+            try:
+                subprocess.run(
+                    [ffmpeg_path, "-version"],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    check=False,
+                )
+                return True
+            except FileNotFoundError:
+                continue
         return False
     except Exception:
         return False
@@ -78,16 +83,27 @@ def _transcode_mp3_to_wav_via_ffmpeg(mp3_path: str) -> str:
 
     Requires ffmpeg available in PATH (bundled in Docker).
     """
-    if not _FFMPEG_AVAILABLE:
-        logger.error("Cannot transcode MP3 to WAV because ffmpeg is not available on PATH")
-        raise RuntimeError("FFmpeg is not available on PATH")
+    # Find ffmpeg executable
+    ffmpeg_cmd = None
+    ffmpeg_paths = ["ffmpeg", "/opt/homebrew/bin/ffmpeg", "/usr/local/bin/ffmpeg"]
+    for path in ffmpeg_paths:
+        try:
+            subprocess.run([path, "-version"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
+            ffmpeg_cmd = path
+            break
+        except FileNotFoundError:
+            continue
+    
+    if not ffmpeg_cmd:
+        logger.error("Cannot transcode MP3 to WAV because ffmpeg is not available")
+        raise RuntimeError("FFmpeg is not available")
 
     wav_fd, wav_path = tempfile.mkstemp(suffix=".wav")
     os.close(wav_fd)
     try:
         # -y overwrite, -i input, pcm_s16le mono to reduce load, but keep native sr via -ar not set
         cmd = [
-            "ffmpeg",
+            ffmpeg_cmd,
             "-hide_banner",
             "-loglevel",
             "error",

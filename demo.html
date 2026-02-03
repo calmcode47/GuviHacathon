@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Detection Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f8f9ff;
+        }
+        
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-icon {
+            font-size: 3em;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        
+        .upload-hint {
+            color: #999;
+            font-size: 0.9em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        select, button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #e1e5e9;
+            font-size: 1em;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .analyze-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            display: none;
+        }
+        
+        .result.human {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        .result.ai-generated {
+            background: linear-gradient(135deg, #f44336, #da190b);
+            color: white;
+        }
+        
+        .result.borderline {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+        
+        .result-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .confidence {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        .explanation {
+            font-size: 1em;
+            line-height: 1.5;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .features {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 10px;
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ AI Voice Detection</h1>
+        <p class="subtitle">Detect AI-generated vs Human voice samples in multiple Indian languages</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">Click to upload or drag & drop</div>
+            <div class="upload-hint">Supports MP3 files (Max 10MB)</div>
+            <input type="file" id="fileInput" class="file-input" accept="audio/mp3">
+        </div>
+        
+        <div class="form-group">
+            <label for="language">Language:</label>
+            <select id="language">
+                <option value="Tamil">Tamil</option>
+                <option value="English">English</option>
+                <option value="Hindi">Hindi</option>
+                <option value="Malayalam">Malayalam</option>
+                <option value="Telugu">Telugu</option>
+            </select>
+        </div>
+        
+        <button class="analyze-btn" id="analyzeBtn" disabled>Analyze Voice</button>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            Analyzing voice sample...
+        </div>
+        
+        <div class="result" id="result">
+            <div class="result-title" id="resultTitle"></div>
+            <div class="confidence" id="confidence"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        
+        <div class="features">
+            <div class="feature-title">🔬 Advanced Analysis Features:</div>
+            <div class="feature-list">
+                <div>• Pitch stability analysis</div>
+                <div>• Jitter and shimmer detection</div>
+                <div>• Harmonic-to-noise ratio</div>
+                <div>• Spectral flatness measurement</div>
+                <div>• MFCC temporal variance</div>
+                <div>• Energy dynamics assessment</div>
+                <div>• Phase coherence analysis</div>
+                <div>• Confidence thresholding</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const loading = document.getElementById('loading');
+        const result = document.getElementById('result');
+        const resultTitle = document.getElementById('resultTitle');
+        const confidence = document.getElementById('confidence');
+        const explanation = document.getElementById('explanation');
+        
+        let selectedFile = null;
+        
+        // Upload area events
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+        
+        function handleFileSelect(file) {
+            if (file.type !== 'audio/mp3' && file.type !== 'audio/mpeg') {
+                alert('Please select an MP3 file');
+                return;
+            }
+            
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File size must be less than 10MB');
+                return;
+            }
+            
+            selectedFile = file;
+            analyzeBtn.disabled = false;
+            uploadArea.innerHTML = `
+                <div class="upload-icon">✅</div>
+                <div class="upload-text">${file.name}</div>
+                <div class="upload-hint">${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+            `;
+        }
+        
+        analyzeBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+            
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            analyzeBtn.disabled = true;
+            
+            try {
+                const base64 = await fileToBase64(selectedFile);
+                const language = document.getElementById('language').value;
+                
+                const response = await fetch('/api/voice-detection', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': 'sk_test_key'
+                    },
+                    body: JSON.stringify({
+                        language: language,
+                        audioFormat: 'mp3',
+                        audioBase64: base64
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    displayResult(data);
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error analyzing voice: ' + error.message);
+            } finally {
+                loading.style.display = 'none';
+                analyzeBtn.disabled = false;
+            }
+        });
+        
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+        
+        function displayResult(data) {
+            result.className = 'result ' + data.classification.toLowerCase().replace('_', '-');
+            
+            let title = '';
+            switch (data.classification) {
+                case 'HUMAN':
+                    title = '👤 Human Voice Detected';
+                    break;
+                case 'AI_GENERATED':
+                    title = '🤖 AI-Generated Voice Detected';
+                    break;
+                case 'BORDERLINE':
+                    title = '⚠️ Borderline Case';
+                    break;
+            }
+            
+            resultTitle.textContent = title;
+            confidence.textContent = `Confidence: ${(data.confidenceScore * 100).toFixed(1)}%`;
+            explanation.textContent = `Analysis: ${data.explanation}`;
+            
+            result.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

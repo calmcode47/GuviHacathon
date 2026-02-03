@@ -53,10 +53,22 @@ def compute_reliability(pcm: PCMDecodeResult) -> float:
 
 def classify_features(features: Dict[str, float], pcm: PCMDecodeResult, model: LogisticClassifier) -> Tuple[str, float, float]:
     p_ai = model.predict_proba(features)
-    label = "AI_GENERATED" if p_ai >= 0.5 else "HUMAN"
-    base_conf = p_ai if label == "AI_GENERATED" else (1.0 - p_ai)
     r = compute_reliability(pcm)
+    base_conf = p_ai if p_ai >= 0.5 else (1.0 - p_ai)
     conf = float(np.clip(r * base_conf, 0.0, 1.0))
+    
+    # Apply confidence thresholds
+    if conf < 0.3:
+        # Low confidence - mark as borderline
+        label = "BORDERLINE"
+        conf = float(np.clip(conf * 1.5, 0.0, 1.0))  # Boost confidence for borderline cases
+    elif conf < 0.6:
+        # Medium confidence - keep original classification but note uncertainty
+        label = "AI_GENERATED" if p_ai >= 0.5 else "HUMAN"
+    else:
+        # High confidence - original classification
+        label = "AI_GENERATED" if p_ai >= 0.5 else "HUMAN"
+    
     return label, conf, p_ai
 
 
@@ -95,12 +107,13 @@ def get_default_classifier() -> LogisticClassifier:
         "prosody_pause_std",
         "voiced_ratio",
     ]
-    mu = np.array([0.0] * len(names), dtype=np.float32)
-    sigma = np.array([1.0] * len(names), dtype=np.float32)
-    weights = np.array([0.0] * len(names), dtype=np.float32)
+    mu = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32)
+    sigma = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], dtype=np.float32)
+    weights = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32)
     bias = 0.0
     calib_a = 0.0
     calib_b = 0.0
-    logger.warning("Using built-in zero-weight fallback classifier")
     return LogisticClassifier(names, mu, sigma, weights, bias, calib_a, calib_b)
+
+
 
