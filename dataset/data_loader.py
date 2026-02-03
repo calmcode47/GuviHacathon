@@ -6,21 +6,9 @@ from typing import List, Tuple, Dict, Optional
 import numpy as np
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
+from app.core.features import FEATURE_NAMES
 from app.utils.audio import read_mp3_to_pcm_result
 from app.services.detector import extract_features_pcm
-
-FEATURE_NAMES: List[str] = [
-    "pitch_var",
-    "jitter_proxy",
-    "hnr_ratio",
-    "spectral_flatness_mean",
-    "spectral_rolloff_median",
-    "phase_coherence_median",
-    "energy_entropy_norm",
-    "temporal_discontinuity_rate",
-    "prosody_pause_std",
-    "voiced_ratio",
-]
 
 
 class VoiceDataset:

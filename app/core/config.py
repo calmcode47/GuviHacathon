@@ -5,7 +5,7 @@ SUPPORTED_LANGUAGES: Set[str] = {"Tamil", "English", "Hindi", "Malayalam", "Telu
 EXPECTED_AUDIO_FORMAT = "mp3"
 
 # Default key only for local testing; override via environment variable in deployment.
-API_KEY = os.getenv("API_KEY", "sk_test_123456789")
+API_KEY = os.getenv("API_KEY", "sk_test_key")
 
 # Input guardrails (configurable via env)
 # Max Base64-decoded audio bytes; default 10 MB

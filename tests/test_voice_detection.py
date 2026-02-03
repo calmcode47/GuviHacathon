@@ -39,7 +39,7 @@ def test_voice_detection_success():
     data = resp.json()
     assert data["status"] == "success"
     assert data["language"] == "English"
-    assert data["classification"] in ("AI_GENERATED", "HUMAN")
+    assert data["classification"] in ("AI_GENERATED", "HUMAN", "BORDERLINE")
     assert 0.0 <= data["confidenceScore"] <= 1.0
     assert isinstance(data["explanation"], str) and data["explanation"]
 

@@ -40,10 +40,11 @@ def main() -> None:
     parser.add_argument("--output-dir", default=str(root / "training_out"))
     parser.add_argument("--val-split", type=float, default=0.2)
     parser.add_argument("--random-seed", type=int, default=42)
+    parser.add_argument("--refresh-cache", action="store_true", help="Re-extract features and ignore cache")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     ds = VoiceDataset(args.data_dir)
-    X, y, langs = ds.load(refresh_cache=False)
+    X, y, langs = ds.load(refresh_cache=args.refresh_cache)
     if np.unique(y).size < 2:
         logging.error("Need both human and ai samples")
         return

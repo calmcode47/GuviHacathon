@@ -2,7 +2,35 @@
 
 A secure FastAPI-based REST API that accepts a Base64-encoded MP3 voice sample and classifies whether the voice is AI-generated or Human. Supports five languages: Tamil, English, Hindi, Malayalam, and Telugu.
 
+## Quick start (end-to-end)
+
+Run the app with the demo UI and a trained model in a few steps:
+
+```bash
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. (Optional) Data setup — if you don't have data/ yet
+python dataset/data_setup.py --base-dir data
+# Generate AI samples (uses corpus in dataset/corpus/)
+python dataset/generate_ai_samples.py --base-dir data --corpus-dir dataset/corpus --samples-per-language 50
+
+# 3. Train a model (use --max-per-class 15 for a quick 30-sample train)
+PYTHONPATH=. python dataset/train_model.py --base-dir data --output app/model/model.json --max-per-class 15
+# Or train on full data (no cap):
+# PYTHONPATH=. python dataset/train_model.py --base-dir data --output app/model/model.json
+
+# 4. Run the API and demo
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+# Or: python -m app.demo
+```
+
+- **Demo UI**: Open **http://localhost:8000/** — upload an MP3 and run detection.
+- **API key (local)**: Use `x-api-key: sk_test_key` (or set `API_KEY` in the environment).
+- **Docs**: http://localhost:8000/docs
+
 ## Features
+- **Demo UI** at `GET /` (upload MP3, get AI vs Human result).
 - Single endpoint: `POST /api/voice-detection`
 - Request JSON contains: `language`, `audioFormat`, `audioBase64`
 - Validates header `x-api-key`
@@ -54,8 +82,8 @@ source .venv/bin/activate   # Windows: .venv\\Scripts\\activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Set API key
-export API_KEY=sk_live_your_key   # Windows PowerShell: $Env:API_KEY="sk_live_your_key"
+# Optional: set API key (default for local: sk_test_key)
+export API_KEY=sk_test_key   # or sk_live_your_key in production
 
 # Run server
 uvicorn app.main:app --host 0.0.0.0 --port 8000
@@ -129,7 +157,7 @@ scripts\setup_env.bat
 ## Project Structure
 ```
 app/
-  main.py              # FastAPI app and route
+  main.py              # FastAPI app, demo at /, API at /api/*
   core/config.py       # Config and constants
   models/schemas.py    # Pydantic request/response models
   utils/audio.py       # Base64 decoding, MP3 load helpers (ffmpeg fallback)
@@ -209,6 +237,9 @@ dataset/
   - python dataset/evaluate.py --data-dir data --weights training_out/weights.pkl --random-seed 42 --output-dir evaluation_out
 - Update runtime classifier:
   - python dataset/update_classifier.py --weights training_out/weights.pkl --classifier-path app/services/classifier.py
+- Deploy trained model to the API:
+  - `python dataset/export_weights_to_json.py --weights training_out/weights.pkl --output app/model/model.json`
+  - Or train directly to app model: `PYTHONPATH=. python dataset/train_model.py --base-dir data --output app/model/model.json [--max-per-class 15]`
 - Alternative runtime load:
   - Place a JSON model at app/model/model.json or set MODEL_PATH; the API auto-loads this file if present.
 

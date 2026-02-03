@@ -9,20 +9,9 @@ from tqdm import tqdm
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score, accuracy_score
+from app.core.features import FEATURE_NAMES
 from app.utils.audio import read_mp3_to_pcm_result
 from app.services.detector import extract_features_pcm
-
-FEATURES = [
-    "pitch_var",
-    "jitter_proxy",
-    "hnr_ratio",
-    "spectral_flatness_mean",
-    "phase_coherence_median",
-    "energy_entropy_norm",
-    "temporal_discontinuity_rate",
-    "prosody_pause_std",
-    "voiced_ratio",
-]
 
 
 def read_metadata(meta_csv: str):
@@ -36,8 +25,17 @@ def read_metadata(meta_csv: str):
 
 
 def collect_samples(base_dir: str, languages):
-    meta = read_metadata(os.path.join(base_dir, "metadata.csv"))
+    seen_paths = set()
     items = []
+    # Include real human recordings first (data/human/real/) so they are used when capping per class
+    real_dir = os.path.join(base_dir, "human", "real")
+    if os.path.isdir(real_dir):
+        for fn in sorted(os.listdir(real_dir)):
+            if fn.lower().endswith(".mp3"):
+                path = os.path.normpath(os.path.join(real_dir, fn))
+                seen_paths.add(path)
+                items.append((path, 0))  # human
+    meta = read_metadata(os.path.join(base_dir, "metadata.csv"))
     for row in meta:
         lang = row.get("language", "").lower()
         if lang not in languages:
@@ -50,6 +48,10 @@ def collect_samples(base_dir: str, languages):
                 path = path2
         if not os.path.isfile(path):
             continue
+        path = os.path.normpath(path)
+        if path in seen_paths:
+            continue
+        seen_paths.add(path)
         label = 1 if src == "ai" else 0
         items.append((path, label))
     return items
@@ -58,7 +60,7 @@ def collect_samples(base_dir: str, languages):
 def features_for_path(path: str):
     pcm = read_mp3_to_pcm_result(path)
     feats = extract_features_pcm(pcm)
-    v = [float(feats.get(k, 0.0)) for k in FEATURES]
+    v = [float(feats.get(k, 0.0)) for k in FEATURE_NAMES]
     return np.array(v, dtype=np.float32)
 
 
@@ -85,7 +87,7 @@ def evaluate(mu, sigma, w, b, X, y):
 
 def save_model(path: str, mu, sigma, w, b):
     obj = {
-        "feature_names": FEATURES,
+        "feature_names": FEATURE_NAMES,
         "mu": mu.tolist(),
         "sigma": sigma.tolist(),
         "weights": w.tolist(),
@@ -106,9 +108,19 @@ def main():
     parser.add_argument("--val-split", type=float, default=0.15)
     parser.add_argument("--test-split", type=float, default=0.15)
     parser.add_argument("--languages", nargs="*", default=["tamil", "english", "hindi", "malayalam", "telugu"])
+    parser.add_argument("--max-per-class", type=int, default=None, help="Cap samples per class for quick training (default: use all)")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     items = collect_samples(args.base_dir, args.languages)
+    if args.max_per_class is not None:
+        from collections import defaultdict
+        by_label = defaultdict(list)
+        for p, l in items:
+            by_label[l].append((p, l))
+        items = []
+        for label in sorted(by_label.keys()):
+            items.extend(by_label[label][: args.max_per_class])
+        logging.info("Using %d samples (max %d per class)", len(items), args.max_per_class)
     if len(items) < 20:
         logging.error("Not enough samples found")
         return
@@ -121,7 +133,7 @@ def main():
             f = features_for_path(p)
             feats.append(f)
         except Exception:
-            feats.append(np.zeros(len(FEATURES), dtype=np.float32))
+            feats.append(np.zeros(len(FEATURE_NAMES), dtype=np.float32))
     X = np.vstack(feats)
     classes = np.unique(labels)
     if classes.size < 2:

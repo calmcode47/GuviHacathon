@@ -2,8 +2,9 @@ import os
 from pathlib import Path
 from typing import List
 
-from fastapi import FastAPI, Header
+from fastapi import FastAPI, Header, Request
 from fastapi.responses import JSONResponse
+from fastapi.templating import Jinja2Templates
 
 from app.models.schemas import VoiceDetectionRequest, VoiceDetectionResponse, ErrorResponse, BatchDetectionRequest, BatchDetectionResponse
 from app.core.config import API_KEY, EXPECTED_AUDIO_FORMAT
@@ -13,6 +14,16 @@ from app.services.classifier import get_default_classifier, classify_features
 from app.services.explainer import explain
 
 app = FastAPI(title="AI-Generated Voice Detection API", version="1.0.0")
+
+# Demo UI: serve from app/templates so "/" shows the voice detection demo
+_templates_dir = Path(__file__).resolve().parent / "templates"
+templates = Jinja2Templates(directory=str(_templates_dir))
+
+
+@app.get("/")
+async def demo_home(request: Request):
+    """Serve the voice detection demo UI (upload MP3, run detection)."""
+    return templates.TemplateResponse("demo.html", {"request": request})
 
 
 @app.get("/health")

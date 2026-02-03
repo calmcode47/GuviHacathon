@@ -6,6 +6,7 @@ from pathlib import Path
 
 import numpy as np
 
+from app.core.features import FEATURE_NAMES
 from app.utils.audio import PCMDecodeResult
 
 
@@ -95,21 +96,11 @@ def get_default_classifier() -> LogisticClassifier:
             logger.exception("Failed to load classifier model from %s; falling back to default classifier", model_path)
     else:
         logger.warning("Model file %s not found; using default zero-weight classifier", model_path)
-    names = [
-        "pitch_var",
-        "jitter_proxy",
-        "hnr_ratio",
-        "spectral_flatness_mean",
-        "spectral_rolloff_median",
-        "phase_coherence_median",
-        "energy_entropy_norm",
-        "temporal_discontinuity_rate",
-        "prosody_pause_std",
-        "voiced_ratio",
-    ]
-    mu = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32)
-    sigma = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], dtype=np.float32)
-    weights = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32)
+    names = list(FEATURE_NAMES)
+    n = len(names)
+    mu = np.zeros(n, dtype=np.float32)
+    sigma = np.ones(n, dtype=np.float32)
+    weights = np.zeros(n, dtype=np.float32)
     bias = 0.0
     calib_a = 0.0
     calib_b = 0.0
