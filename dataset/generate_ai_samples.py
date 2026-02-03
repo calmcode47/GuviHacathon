@@ -4,6 +4,7 @@ import asyncio
 import hashlib
 import argparse
 import logging
+from pathlib import Path
 from typing import List, Dict
 from tqdm import tqdm
 from pydub import AudioSegment
@@ -57,6 +58,16 @@ def read_corpus(path: str) -> List[str]:
     words_ok = [ln for ln in lines if 5 <= len(ln.split()) <= 50]
     return words_ok if len(words_ok) >= 1 else lines
 
+def compose_text(sentences: List[str], start_idx: int, min_words: int) -> str:
+    buf: List[str] = []
+    total = 0
+    j = start_idx
+    while j < len(sentences) and total < min_words:
+        s = sentences[j]
+        buf.append(s)
+        total += len(s.split())
+        j += 1
+    return " ".join(buf)
 
 def checksum(path: str) -> str:
     h = hashlib.sha256()
@@ -123,10 +134,12 @@ def append_metadata(meta_path: str, row: Dict[str, str]) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base-dir", default="data")
-    parser.add_argument("--corpus-dir", default="dataset/corpus")
+    root = Path(__file__).resolve().parents[1]
+    parser.add_argument("--base-dir", default=str(root / "data"))
+    parser.add_argument("--corpus-dir", default=str(root / "dataset" / "corpus"))
     parser.add_argument("--samples-per-language", type=int, default=50)
     parser.add_argument("--target-sample-rate", type=int, default=22050)
+    parser.add_argument("--min-duration-sec", type=float, default=10.0)
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     base = args.base_dir
@@ -144,7 +157,8 @@ def main() -> None:
         for i in range(args.samples_per_language):
             if i >= len(sentences):
                 break
-            text = sentences[i]
+            est_words = max(10, int(round(args.min_duration_sec * 2.5)))
+            text = compose_text(sentences, i, est_words)
             clip_id = f"{lang}_ai_{i:03d}"
             out_path = os.path.join(out_dir, f"{clip_id}.mp3")
             engine_name = ENGINES[i % len(ENGINES)]
@@ -173,6 +187,18 @@ def main() -> None:
                 except Exception as e2:
                     logging.error("Fallback gTTS failed for %s #%d: %s", lang, i, str(e2))
             if ok:
+                # Ensure minimum duration by padding silence if needed
+                try:
+                    seg = AudioSegment.from_file(out_path, format="mp3")
+                    if seg.duration_seconds < args.min_duration_sec:
+                        pad_ms = int((args.min_duration_sec - seg.duration_seconds) * 1000)
+                        silence = AudioSegment.silent(duration=pad_ms, frame_rate=args.target_sample_rate)
+                        seg = seg + silence
+                        seg = seg.set_frame_rate(args.target_sample_rate)
+                        seg.export(out_path, format="mp3")
+                        info = {"duration_sec": seg.duration_seconds, "sample_rate": args.target_sample_rate}
+                except Exception as e_pad:
+                    logging.warning("Failed to pad duration for %s: %s", clip_id, str(e_pad))
                 sha = checksum(out_path)
                 row = {
                     "clip_id": clip_id,
@@ -184,7 +210,7 @@ def main() -> None:
                     "text_id": f"{lang}_{i:03d}",
                     "duration_sec": f"{info.get('duration_sec', 0.0):.3f}",
                     "sample_rate": str(info.get("sample_rate", args.target_sample_rate)),
-                    "file_path": out_path.replace("\\", "/"),
+                    "file_path": Path(out_path).as_posix(),
                     "checksum_sha256": sha,
                     "consent_received": "n/a",
                     "notes": "",

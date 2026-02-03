@@ -3,6 +3,7 @@ import json
 import argparse
 import logging
 import csv
+from pathlib import Path
 import numpy as np
 from tqdm import tqdm
 from sklearn.linear_model import LogisticRegression
@@ -99,8 +100,9 @@ def save_model(path: str, mu, sigma, w, b):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base-dir", default="data")
-    parser.add_argument("--output", default="app/model/model.json")
+    root = Path(__file__).resolve().parents[1]
+    parser.add_argument("--base-dir", default=str(root / "data"))
+    parser.add_argument("--output", default=str(root / "app" / "model" / "model.json"))
     parser.add_argument("--val-split", type=float, default=0.15)
     parser.add_argument("--test-split", type=float, default=0.15)
     parser.add_argument("--languages", nargs="*", default=["tamil", "english", "hindi", "malayalam", "telugu"])

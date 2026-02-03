@@ -2,6 +2,7 @@ import os
 import argparse
 import logging
 import csv
+from pathlib import Path
 from typing import List, Dict
 from tqdm import tqdm
 from mutagen.mp3 import MP3
@@ -34,9 +35,9 @@ def validate_row(path: str) -> Dict[str, str]:
         duration = float(audio.info.length or 0.0)
         sr = int(getattr(audio.info, "sample_rate", 0))
         ch = int(getattr(audio.info, "channels", 0))
-        if duration < 1.0 or duration > 120.0:
+        if duration < 15.0 or duration > 60.0:
             issues.append("duration_out_of_range")
-        if sr < 16000 or sr > 44100:
+        if sr < 16000 or sr > 48000:
             issues.append("sample_rate_out_of_range")
         if ch not in (1, 2):
             issues.append("channels_invalid")
@@ -94,9 +95,10 @@ def split_recommendations(rows: List[Dict[str, str]], out_csv: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base-dir", default="data")
-    parser.add_argument("--report-csv", default="dataset/validation_report.csv")
-    parser.add_argument("--splits-csv", default="dataset/split_recommendations.csv")
+    root = Path(__file__).resolve().parents[1]
+    parser.add_argument("--base-dir", default=str(root / "data"))
+    parser.add_argument("--report-csv", default=str(root / "dataset" / "validation_report.csv"))
+    parser.add_argument("--splits-csv", default=str(root / "dataset" / "split_recommendations.csv"))
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     files = scan_files(args.base_dir)

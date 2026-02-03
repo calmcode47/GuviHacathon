@@ -2,6 +2,7 @@ import os
 import argparse
 import logging
 import json
+from pathlib import Path
 import numpy as np
 from typing import Dict
 from tqdm import tqdm
@@ -42,11 +43,12 @@ def predict(weights: Dict, X: np.ndarray) -> np.ndarray:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data-dir", default="data")
-    parser.add_argument("--weights", default="training_out/weights.pkl")
+    root = Path(__file__).resolve().parents[1]
+    parser.add_argument("--data-dir", default=str(root / "data"))
+    parser.add_argument("--weights", default=str(root / "training_out" / "weights.pkl"))
     parser.add_argument("--random-seed", type=int, default=42)
     parser.add_argument("--val-split", type=float, default=0.2)
-    parser.add_argument("--output-dir", default="evaluation_out")
+    parser.add_argument("--output-dir", default=str(root / "evaluation_out"))
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     ds = VoiceDataset(args.data_dir)

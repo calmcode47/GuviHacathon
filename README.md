@@ -52,6 +52,23 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 Note: For MP3 decoding, `librosa` uses `audioread` which may rely on `ffmpeg` or system codecs. If MP3 fails on your system, prefer Docker or install `ffmpeg` locally.
 
+## Environment Setup Scripts
+- macOS/Linux:
+```bash
+bash scripts/setup_env.sh
+source .venv/bin/activate
+```
+- Windows PowerShell:
+```powershell
+pwsh scripts/setup_env.ps1
+. .venv\Scripts\Activate.ps1
+```
+- Windows cmd:
+```bat
+scripts\setup_env.bat
+.venv\Scripts\activate.bat
+```
+
 ## Endpoint Details
 - Method: `POST`
 - Path: `/api/voice-detection`

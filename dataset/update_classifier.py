@@ -5,6 +5,7 @@ import json
 import re
 import numpy as np
 from joblib import load
+from pathlib import Path
 
 
 def to_array_str(arr: np.ndarray) -> str:
@@ -14,8 +15,9 @@ def to_array_str(arr: np.ndarray) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--weights", default="training_out/weights.pkl")
-    parser.add_argument("--classifier-path", default="app/services/classifier.py")
+    root = Path(__file__).resolve().parents[1]
+    parser.add_argument("--weights", default=str(root / "training_out" / "weights.pkl"))
+    parser.add_argument("--classifier-path", default=str(root / "app" / "services" / "classifier.py"))
     args = parser.parse_args()
     w = load(args.weights)
     with open(args.classifier_path, "r", encoding="utf-8") as f:

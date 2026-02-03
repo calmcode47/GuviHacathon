@@ -2,6 +2,7 @@ import os
 import csv
 import argparse
 import logging
+from pathlib import Path
 import hashlib
 import shutil
 import numpy as np
@@ -130,7 +131,7 @@ def main() -> None:
                     "text_id": f"{lang}_{i:03d}",
                     "duration_sec": f"{dur:.3f}",
                     "sample_rate": str(sr),
-                    "file_path": out_path.replace("\\", "/"),
+                    "file_path": Path(out_path).as_posix(),
                     "checksum_sha256": sha,
                     "consent_received": "open_dataset",
                     "notes": f"common_voice_{ver}:{code}",

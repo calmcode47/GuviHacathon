@@ -3,6 +3,7 @@ import numpy as np
 from app.utils.audio import PCMDecodeResult
 import os
 import json
+from pathlib import Path
 
 
 class LogisticClassifier:
@@ -54,10 +55,14 @@ def classify_features(features: Dict[str, float], pcm: PCMDecodeResult, model: L
 
 
 def get_default_classifier() -> LogisticClassifier:
-    path = os.getenv("MODEL_PATH", "app/model/model.json")
-    if os.path.exists(path):
+    env_path = os.getenv("MODEL_PATH")
+    if env_path:
+        model_path = Path(env_path)
+    else:
+        model_path = Path(__file__).resolve().parents[1] / "model" / "model.json"
+    if model_path.exists():
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(model_path, "r", encoding="utf-8") as f:
                 obj = json.load(f)
             names = obj["feature_names"]
             mu = np.array(obj["mu"], dtype=np.float32)
@@ -69,51 +74,23 @@ def get_default_classifier() -> LogisticClassifier:
             return LogisticClassifier(names, mu, sigma, weights, bias, calib_a, calib_b)
         except Exception:
             pass
-    names = [
+        names = [
         "pitch_var",
         "jitter_proxy",
         "hnr_ratio",
         "spectral_flatness_mean",
+        "spectral_rolloff_median",
         "phase_coherence_median",
         "energy_entropy_norm",
         "temporal_discontinuity_rate",
         "prosody_pause_std",
         "voiced_ratio",
     ]
-    mu = np.array([
-        20.0,
-        0.03,
-        0.5,
-        0.2,
-        0.6,
-        0.7,
-        0.1,
-        5.0,
-        0.6,
-    ], dtype=np.float32)
-    sigma = np.array([
-        15.0,
-        0.02,
-        0.2,
-        0.1,
-        0.2,
-        0.2,
-        0.1,
-        3.0,
-        0.2,
-    ], dtype=np.float32)
-    weights = np.array([
-        -0.9,
-        -0.8,
-        0.7,
-        -0.4,
-        0.6,
-        -0.5,
-        -0.2,
-        -0.5,
-        0.2,
-    ], dtype=np.float32)
+    mu = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32)
+    sigma = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], dtype=np.float32)
+    weights = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32)
     bias = 0.0
-    calib_a = 1.0
+    calib_a = 0.0
     calib_b = 0.0
     return LogisticClassifier(names, mu, sigma, weights, bias, calib_a, calib_b)
+

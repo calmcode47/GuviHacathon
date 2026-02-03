@@ -5,6 +5,7 @@ import argparse
 import logging
 import hashlib
 import shutil
+from pathlib import Path
 from typing import List, Dict, Tuple
 from tqdm import tqdm
 from mutagen.mp3 import MP3
@@ -150,7 +151,7 @@ def main() -> None:
             "text_id": "",
             "duration_sec": f"{dur:.3f}",
             "sample_rate": str(sr),
-            "file_path": dst.replace("\\", "/"),
+            "file_path": Path(dst).as_posix(),
             "checksum_sha256": cs,
             "consent_received": "unknown",
             "notes": "",
