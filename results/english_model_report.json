@@ -1,0 +1,153 @@
+{
+  "generated_at": 1770152677,
+  "focus_language": "English",
+  "training": {
+    "accuracy_train": 1.0,
+    "accuracy_val": 1.0,
+    "accuracy_test": 1.0,
+    "roc_auc_test": 1.0,
+    "ece_test": 0.0695071816444397,
+    "per_language_accuracy_test": {
+      "english": 1.0,
+      "hindi": 1.0,
+      "malayalam": 1.0,
+      "tamil": 1.0,
+      "telugu": 1.0
+    },
+    "precision_ai": 1.0,
+    "recall_ai": 1.0,
+    "f1_ai": 1.0,
+    "confusion_matrix_test": [
+      [
+        5,
+        0
+      ],
+      [
+        0,
+        5
+      ]
+    ],
+    "feature_importance": [
+      0.13216643035411835,
+      0.14370806515216827,
+      0.1097094938158989,
+      0.12056225538253784,
+      0.1314322054386139,
+      0.21886290609836578,
+      0.06901900470256805,
+      0.030670860782265663,
+      0.015363581478595734,
+      0.0
+    ],
+    "feature_names": [
+      "pitch_var",
+      "jitter_proxy",
+      "hnr_ratio",
+      "spectral_flatness_mean",
+      "spectral_rolloff_median",
+      "phase_coherence_median",
+      "energy_entropy_norm",
+      "temporal_discontinuity_rate",
+      "prosody_pause_std",
+      "voiced_ratio"
+    ],
+    "train_time_sec": 0.00011949999679927714,
+    "samples": {
+      "train": 80,
+      "val": 10,
+      "test": 10
+    },
+    "timestamp": 1770152239
+  },
+  "api_verification": {
+    "status": "ok",
+    "issues": {},
+    "prediction": {
+      "label": "HUMAN",
+      "confidence": 0.7877756037383709,
+      "p_ai": 0.21222439626162914,
+      "ok_confidence_range": true
+    }
+  },
+  "performance": {
+    "mean_latency_ms": 962.3573166669909,
+    "median_latency_ms": 788.2276500004082,
+    "p95_latency_ms": 913.5680299998055,
+    "p99_latency_ms": 4459.091131999999,
+    "mean_decode_b64_ms": 24.887693333585048,
+    "mean_decode_pcm_ms": 71.29211999999825,
+    "mean_features_ms": 866.1502466664388,
+    "mean_classify_ms": 0.027256666968848247,
+    "memory_rss_mb_mean": 241.15286458333333,
+    "count": 30
+  },
+  "dataset_summary": {
+    "per_language": {
+      "english": {
+        "human_samples": 50,
+        "ai_samples": 10,
+        "avg_duration_sec": 14.2632,
+        "sample_rate_distribution": {
+          "16000": 50,
+          "24000": 10
+        },
+        "hours": 0.23772
+      },
+      "hindi": {
+        "human_samples": 0,
+        "ai_samples": 10,
+        "avg_duration_sec": 13.459200000000001,
+        "sample_rate_distribution": {
+          "24000": 10
+        },
+        "hours": 0.03738666666666667
+      },
+      "malayalam": {
+        "human_samples": 0,
+        "ai_samples": 10,
+        "avg_duration_sec": 17.318399999999997,
+        "sample_rate_distribution": {
+          "24000": 10
+        },
+        "hours": 0.04810666666666666
+      },
+      "tamil": {
+        "human_samples": 0,
+        "ai_samples": 10,
+        "avg_duration_sec": 21.3216,
+        "sample_rate_distribution": {
+          "24000": 10
+        },
+        "hours": 0.05922666666666667
+      },
+      "telugu": {
+        "human_samples": 0,
+        "ai_samples": 10,
+        "avg_duration_sec": 18.312,
+        "sample_rate_distribution": {
+          "24000": 10
+        },
+        "hours": 0.05086666666666667
+      }
+    },
+    "total_hours": 0.43330666666666656
+  },
+  "deployment_readiness": {
+    "Model JSON present and valid": true,
+    "API verification script": true,
+    "Accuracy \u2265 70%": true,
+    "ECE \u2264 0.15": true,
+    "Latency p95 < 5s": true,
+    "API imports without errors": true
+  },
+  "limitations": [
+    "Model optimized for English only",
+    "Non-English requests have confidence down-weighted",
+    "Human data currently limited to English; others have AI-only"
+  ],
+  "recommendations": [
+    "Add human samples for Hindi, Malayalam, Tamil, Telugu",
+    "Retrain and re-calibrate multi-language model",
+    "Remove confidence down-weight for languages passing validation"
+  ]
+}

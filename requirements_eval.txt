@@ -1,0 +1,2 @@
+psutil>=5.9.5
+seaborn>=0.13.0

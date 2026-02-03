@@ -1,0 +1,88 @@
+{
+  "files": [
+    {
+      "path": "README.md",
+      "present": true
+    },
+    {
+      "path": "APPROACH.md",
+      "present": true
+    },
+    {
+      "path": "API.md",
+      "present": true
+    },
+    {
+      "path": "FINAL_REPORT.md",
+      "present": true
+    },
+    {
+      "path": "english_model_report.json",
+      "present": true
+    },
+    {
+      "path": "code/app",
+      "present": true
+    },
+    {
+      "path": "code/dataset",
+      "present": true
+    },
+    {
+      "path": "code/requirements.txt",
+      "present": true
+    },
+    {
+      "path": "code/README_CODE.md",
+      "present": true
+    },
+    {
+      "path": "results/training_report.json",
+      "present": true
+    },
+    {
+      "path": "results/confusion_matrix.png",
+      "present": true
+    },
+    {
+      "path": "results/roc_curve.png",
+      "present": true
+    },
+    {
+      "path": "results/calibration_curve.png",
+      "present": true
+    },
+    {
+      "path": "results/feature_importance.png",
+      "present": true
+    },
+    {
+      "path": "results/benchmark_results.json",
+      "present": true
+    },
+    {
+      "path": "results/dataset_report.json",
+      "present": true
+    },
+    {
+      "path": "docs/API.md",
+      "present": false
+    },
+    {
+      "path": "docs/DEPLOYMENT_READY.md",
+      "present": true
+    },
+    {
+      "path": "docs/ENGLISH_ONLY_APPROACH.md",
+      "present": true
+    },
+    {
+      "path": "docs/RUN_EVALUATION.md",
+      "present": true
+    },
+    {
+      "path": "DEPLOYMENT_URL.txt",
+      "present": true
+    }
+  ]
+}

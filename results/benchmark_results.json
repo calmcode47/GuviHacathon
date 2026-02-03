@@ -1,0 +1,1 @@
+{"mean_latency_ms": 962.3573166669909, "median_latency_ms": 788.2276500004082, "p95_latency_ms": 913.5680299998055, "p99_latency_ms": 4459.091131999999, "mean_decode_b64_ms": 24.887693333585048, "mean_decode_pcm_ms": 71.29211999999825, "mean_features_ms": 866.1502466664388, "mean_classify_ms": 0.027256666968848247, "memory_rss_mb_mean": 241.15286458333333, "count": 30}

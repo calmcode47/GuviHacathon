@@ -1,0 +1,17 @@
+{
+  "build": {
+    "dockerfilePath": "Dockerfile"
+  },
+  "deploy": {
+    "command": "gunicorn -w ${MAX_WORKERS:-4} -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8000",
+    "healthcheckPath": "/health",
+    "port": 8000,
+    "restartPolicyType": "ON_FAILURE"
+  },
+  "env": {
+    "API_KEY": "your_secret_key_here",
+    "LOG_LEVEL": "INFO",
+    "MAX_WORKERS": "4",
+    "ENVIRONMENT": "production"
+  }
+}

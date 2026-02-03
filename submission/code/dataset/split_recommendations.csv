@@ -1,0 +1,6 @@
+source,language,total,train,val,test
+ai,tamil,7,5,1,1
+ai,english,10,7,2,1
+ai,hindi,7,5,1,1
+ai,malayalam,7,5,1,1
+ai,telugu,7,5,1,1

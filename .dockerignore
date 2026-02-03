@@ -1,0 +1,12 @@
+data/
+results/
+dataset/
+.conda/
+__pycache__/
+*.pyc
+.git/
+*.pkl
+*.ipynb
+venv/
+.vscode/
+node_modules/
