@@ -3,11 +3,16 @@
 A secure FastAPI-based REST API that accepts a Base64-encoded MP3 voice sample and classifies whether the voice is AI-generated or Human. Supports five languages: Tamil, English, Hindi, Malayalam, and Telugu.
 
 ## Features
-- Single endpoint: `POST /api/voice-detection`
-- Request JSON contains: `language`, `audioFormat`, `audioBase64`
-- Validates header `x-api-key`
-- Returns JSON with `classification` (AI_GENERATED or HUMAN), `confidenceScore` (0.0–1.0), and `explanation`
-- Lightweight heuristic analysis using audio features (no external detection APIs)
+- **Single & Batch Endpoints**: `POST /api/voice-detection` and `POST /api/voice-detection/batch`
+- **ML-Powered Detection**: Trained logistic regression model with calibration
+- **Confidence Thresholds**: Low/Medium/High confidence categories for borderline cases
+- **Audio Quality Assessment**: Automatic quality scoring and metrics
+- **Demo Web Interface**: Beautiful, modern UI at `/` for easy testing
+- **Rate Limiting**: Built-in rate limiting (10/min single, 5/min batch)
+- **Security**: Security headers, API key validation, CORS support
+- **Performance**: Optimized for < 2 second response times with model caching
+- **Logging & Monitoring**: Comprehensive logging and request timing
+- **Production Ready**: Deployment scripts and load testing tools included
 - Cross-platform: macOS, Windows, Linux via Docker
 
 ## Minimal Local Run (Summary)
@@ -100,7 +105,15 @@ scripts\setup_env.bat
   "language": "Tamil",
   "classification": "AI_GENERATED",
   "confidenceScore": 0.91,
-  "explanation": "Unnatural pitch stability and clean harmonic profile detected"
+  "confidenceCategory": "high",
+  "explanation": "Unnatural pitch stability and clean harmonic profile detected",
+  "audioQuality": {
+    "sampleRate": 22050,
+    "duration": 3.45,
+    "channels": 1,
+    "isValidFormat": true,
+    "qualityScore": 0.95
+  }
 }
 ```
 
@@ -117,9 +130,29 @@ scripts\setup_env.bat
 - **Health check**: `GET /health`
   - Returns `{"status": "ok", "model_loaded": true/false}`.
   - Useful for readiness probes and simple monitoring.
+- **Demo Interface**: `GET /`
+  - Beautiful web interface for testing the API interactively
 - **Interactive docs** (FastAPI built-in):
   - Open `http://localhost:8000/docs` for Swagger UI.
   - Open `http://localhost:8000/redoc` for ReDoc.
+
+## New Features
+
+### Batch Processing
+Process multiple audio samples in a single request:
+```bash
+curl -X POST "http://localhost:8000/api/voice-detection/batch" \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: sk_test_123456789" \
+  -d '{"samples": [...]}'
+```
+
+### Testing & Load Testing
+- **Test diverse samples**: `python scripts/test_diverse_samples.py --data-dir data`
+- **Load testing**: `python scripts/load_test.py --audio-file sample.mp3 --requests 100 --concurrency 20`
+
+### Deployment
+- **Quick deploy**: `./scripts/deploy.sh` (requires Docker)
 
 ## Design Notes
 - Heuristic features: pitch stability (YIN), energy dynamics (RMS), spectral flatness, MFCC temporal variance, harmonic-to-noise ratio (HPR), onset rate.
