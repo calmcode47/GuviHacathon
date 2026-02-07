@@ -1,14 +1,11 @@
 import base64
 import io
-from typing import Optional
 from urllib.parse import urlparse
-
-import os
-from pathlib import Path
 import requests
 
 MP3_MAGIC_HEADERS = [b"ID3", b"\xff\xfb", b"\xff\xf3", b"\xff\xf2"]
 MAX_DOWNLOAD_BYTES = 50 * 1024 * 1024
+UA = "VoiceDetector/1.0 (+https://railway.app)"
 
 
 def _has_mp3_magic_header(audio_bytes: bytes) -> bool:
@@ -27,35 +24,20 @@ def _validate_url(url: str) -> bool:
 def download_mp3_from_url(url: str) -> str:
     """
     Download an MP3 from a public URL and return it as a Base64 string.
+    Strictly online: no local fallbacks.
     """
-    mode = os.getenv("URL_FETCH_MODE", "offline").lower()
-    def _fallback_local_sample() -> str:
-        """Fallback: use local sample MP3 to ensure flow continues."""
-        root = Path(__file__).resolve().parents[2]
-        sample = root / "data" / "human" / "english" / "english_proto_000.mp3"
-        if sample.exists():
-            with open(sample, "rb") as f:
-                return base64.b64encode(f.read()).decode("ascii")
-        raise RuntimeError("Download failed and no local sample available")
-    if mode != "online":
-        return _fallback_local_sample()
     if not _validate_url(url):
         raise ValueError("Invalid URL format")
     try:
-        r = requests.get(url, timeout=30, stream=True)
+        r = requests.get(url, timeout=30, stream=True, headers={"User-Agent": UA})
     except requests.exceptions.Timeout:
-        return _fallback_local_sample()
-    except Exception:
-        return _fallback_local_sample()
+        raise TimeoutError("Download timeout after 30s")
+    except Exception as e:
+        raise RuntimeError(f"Download failed: {str(e)}")
     if r.status_code != 200:
-        return _fallback_local_sample()
+        raise RuntimeError(f"Download failed: HTTP {r.status_code}")
     ctype = r.headers.get("Content-Type", "")
-    if ("audio" not in ctype.lower()) and ("mpeg" not in ctype.lower()):
-        # Try fallback if content-type is not audio
-        try:
-            return _fallback_local_sample()
-        except Exception:
-            pass
+    # Allow if audio or mpeg; otherwise continue but rely on magic header
     buf = io.BytesIO()
     total = 0
     for chunk in r.iter_content(chunk_size=65536):
@@ -66,8 +48,5 @@ def download_mp3_from_url(url: str) -> str:
             buf.write(chunk)
     data = buf.getvalue()
     if not _has_mp3_magic_header(data):
-        try:
-            return _fallback_local_sample()
-        except Exception:
-            raise ValueError("File is not MP3 format")
+        raise ValueError("File is not MP3 format")
     return base64.b64encode(data).decode("ascii")
