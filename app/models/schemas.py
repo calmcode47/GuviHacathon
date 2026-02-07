@@ -6,7 +6,16 @@ LanguageLiteral = Literal["Tamil", "English", "Hindi", "Malayalam", "Telugu"]
 class VoiceDetectionRequest(BaseModel):
     language: LanguageLiteral = Field(..., description="One of the supported languages")
     audioFormat: Literal["mp3"] = Field(..., description="Must be 'mp3'")
-    audioBase64: str = Field(..., description="Base64-encoded MP3 audio")
+    audioBase64: Optional[str] = Field(None, description="Base64-encoded MP3 audio")
+    audioUrl: Optional[str] = Field(None, description="Public URL to an MP3 file")
+
+class AudioQuality(BaseModel):
+    formatValid: bool
+    sampleRateSuspect: bool
+    shortAudio: bool
+    durationSeconds: float
+    sampleRate: int
+    channels: int
 
 class VoiceDetectionResponse(BaseModel):
     status: Literal["success"]
@@ -14,6 +23,7 @@ class VoiceDetectionResponse(BaseModel):
     classification: Literal["AI_GENERATED", "HUMAN", "BORDERLINE"]
     confidenceScore: float
     explanation: str
+    audioQuality: AudioQuality
 
 class BatchAudioRequest(BaseModel):
     language: LanguageLiteral = Field(..., description="One of the supported languages")

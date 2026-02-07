@@ -111,13 +111,14 @@ scripts\setup_env.bat
 ## Endpoint Details
 - Method: `POST`
 - Path: `/api/voice-detection`
-- Headers: `x-api-key: <YOUR_SECRET_API_KEY>`
-- Body (JSON):
+- Headers: either `x-api-key: <YOUR_SECRET_API_KEY>` or `Authorization: Bearer <YOUR_SECRET_API_KEY>`
+- Body (JSON) — provide exactly one of `audioBase64` or `audioUrl`:
 ```json
 {
   "language": "Tamil | English | Hindi | Malayalam | Telugu",
   "audioFormat": "mp3",
-  "audioBase64": "<Base64-encoded MP3>"
+  "audioBase64": "<Base64-encoded MP3>",
+  "audioUrl": "https://example.com/path/to/file.mp3"
 }
 ```
 
@@ -128,7 +129,15 @@ scripts\setup_env.bat
   "language": "Tamil",
   "classification": "AI_GENERATED",
   "confidenceScore": 0.91,
-  "explanation": "Unnatural pitch stability and clean harmonic profile detected"
+  "explanation": "Unnatural pitch stability and clean harmonic profile detected",
+  "audioQuality": {
+    "formatValid": true,
+    "sampleRateSuspect": false,
+    "shortAudio": false,
+    "durationSeconds": 12.34,
+    "sampleRate": 22050,
+    "channels": 1
+  }
 }
 ```
 

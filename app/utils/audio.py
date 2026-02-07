@@ -208,7 +208,41 @@ def decode_base64_mp3_to_pcm(audio_base64: str) -> PCMDecodeResult:
         try:
             frames, sr, ch = _read_mp3_pcm_with_audioread(temp_path)
         except Exception as e:
-            raise RuntimeError("Failed to decode MP3") from e
+            # Fallback 1: librosa load to float waveform, then convert to int16 PCM
+            try:
+                y, sr = librosa.load(temp_path, sr=None, mono=True)
+                ch = 1
+                pcm = np.clip(y * 32768.0, -32768.0, 32767.0).astype(np.int16)
+                frames = pcm.reshape(1, -1)
+            except Exception:
+                # Fallback 2: ffmpeg transcode to WAV, then audioread PCM
+                if _FFMPEG_AVAILABLE:
+                    try:
+                        wav_path = _transcode_mp3_to_wav_via_ffmpeg(temp_path)
+                        try:
+                            with audioread.audio_open(wav_path) as wf:
+                                sr = int(wf.samplerate)
+                                ch = int(wf.channels)
+                                pcm_chunks = []
+                                for buf in wf:
+                                    pcm_chunks.append(np.frombuffer(buf, dtype=np.int16))
+                                if not pcm_chunks:
+                                    raise ValueError("Empty audio data")
+                                pcm = np.concatenate(pcm_chunks)
+                                if ch > 1:
+                                    frames = pcm.reshape(-1, ch).T
+                                else:
+                                    frames = pcm.reshape(1, -1)
+                        finally:
+                            try:
+                                if os.path.exists(wav_path):
+                                    os.remove(wav_path)
+                            except Exception:
+                                pass
+                    except Exception as ee:
+                        raise RuntimeError("Failed to decode MP3") from ee
+                else:
+                    raise RuntimeError("Failed to decode MP3") from e
         duration = float(frames.shape[1]) / float(sr)
         sr_suspect = not (8000 <= sr <= 48000)
         return PCMDecodeResult(
