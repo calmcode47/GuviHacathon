@@ -1,0 +1,151 @@
+clip_id,language,source_type,speaker_id,tts_engine,tts_voice,text_id,duration_sec,sample_rate,file_path,checksum_sha256,consent_received,notes
+tamil_ai_000,tamil,ai,,gtts,,tamil_000,5.016,24000,data/ai/tamil/tamil_ai_000.mp3,4783b16de4772ab92cd5d01e98f321b1bff99e62493bc46cb4e3e527c33a17b8,n/a,
+tamil_ai_001,tamil,ai,,edge-tts,ta-IN-PallaviNeural,tamil_001,3.192,24000,data/ai/tamil/tamil_ai_001.mp3,1f6ad9eea1b9c5a4469e20297b9928ae338127b839111e0c809f53fb1612757f,n/a,
+tamil_ai_002,tamil,ai,,pyttsx3,,tamil_002,4.344,24000,data/ai/tamil/tamil_ai_002.mp3,9b2f9442adcf3cd24f48fd3bd041c920cf01c0391a1b8e0fb09e51d9ac67b589,n/a,
+tamil_ai_003,tamil,ai,,gtts,,tamil_003,4.152,24000,data/ai/tamil/tamil_ai_003.mp3,406fb4399b4fb3d0eed7137cc92cda338ddbc058596c54b061878026fea95ff9,n/a,
+tamil_ai_004,tamil,ai,,edge-tts,ta-IN-PallaviNeural,tamil_004,3.072,24000,data/ai/tamil/tamil_ai_004.mp3,709eae0f265220cf76e1a217446b0d85507d611e911a8d0f06cbc3b067edb034,n/a,
+tamil_ai_005,tamil,ai,,pyttsx3,,tamil_005,4.824,24000,data/ai/tamil/tamil_ai_005.mp3,0b7154ca4dc65371e3ed884992ce49f252ad633398f15364201b45b9179f84b7,n/a,
+tamil_ai_006,tamil,ai,,gtts,,tamil_006,4.464,24000,data/ai/tamil/tamil_ai_006.mp3,15f32bd6c8cadf07c403db3dc8a300f8be5a76dd491ba3449b5e465e5bd962e5,n/a,
+tamil_ai_007,tamil,ai,,edge-tts,ta-IN-PallaviNeural,tamil_007,3.552,24000,data/ai/tamil/tamil_ai_007.mp3,ece460f93a20942f31eb56b276121a29ae6cfb675d2cec9dc4de9e2518eee185,n/a,
+tamil_ai_008,tamil,ai,,pyttsx3,,tamil_008,4.200,24000,data/ai/tamil/tamil_ai_008.mp3,2028254d783b95b3695494c670d92cd09e7cc79473be4a24ad6adc38a52d0a5f,n/a,
+tamil_ai_009,tamil,ai,,gtts,,tamil_009,5.160,24000,data/ai/tamil/tamil_ai_009.mp3,f2ebd610ad6bace2e48bce6ba3596e1c7cf8242ac147d6dc2cd9decfb6b30179,n/a,
+english_ai_000,english,ai,,gtts,,english_000,3.744,24000,data/ai/english/english_ai_000.mp3,900f5aacb9665ce2e0cceaa166ff512ae46e858fa0e445c2a00940ff6ca21a8f,n/a,
+english_ai_001,english,ai,,edge-tts,en-US-AriaNeural,english_001,3.384,24000,data/ai/english/english_ai_001.mp3,a8970f2c26ba408a2a8a0f5d038ba400790ba69aa1f901a60c7308b64bf13de6,n/a,
+english_ai_002,english,ai,,pyttsx3,,english_002,3.672,24000,data/ai/english/english_ai_002.mp3,39c2b84a14baf5b0d1e0b0b525f8e7cb3e8de7adc1f372f0cce450f88fd608f2,n/a,
+english_ai_003,english,ai,,gtts,,english_003,3.000,24000,data/ai/english/english_ai_003.mp3,2c9b659c7ab18fd590aa826bd405e7de7b7e953db9fca10e0a4ca4af0f2a2b73,n/a,
+english_ai_004,english,ai,,edge-tts,en-US-AriaNeural,english_004,3.504,24000,data/ai/english/english_ai_004.mp3,1be34f714221c1b990d457718ddcbc641c198b9db47ddcc8ebdbe19e6e52bb4a,n/a,
+english_ai_005,english,ai,,pyttsx3,,english_005,3.552,24000,data/ai/english/english_ai_005.mp3,73fd5e68dcf2895b5f2d3fc5eafb71f513c5ec39b48db0d4ac9366d52c100f7a,n/a,
+english_ai_006,english,ai,,gtts,,english_006,4.344,24000,data/ai/english/english_ai_006.mp3,8f6042da80181a859ad410f93877a87be346174be570c7d09cf2ceec254a78b4,n/a,
+english_ai_007,english,ai,,edge-tts,en-US-AriaNeural,english_007,3.288,24000,data/ai/english/english_ai_007.mp3,e47f6555cfe7640d8ec88fd95e64f1d018d5ba195084aed4774ce412c30749e8,n/a,
+english_ai_008,english,ai,,pyttsx3,,english_008,3.504,24000,data/ai/english/english_ai_008.mp3,55ff69d3606f60623ff8855c03171ec4cbfb22787e94b439a3ffe745d3b8b056,n/a,
+english_ai_009,english,ai,,gtts,,english_009,3.504,24000,data/ai/english/english_ai_009.mp3,a668e47b1c0352a83f9c5fab96b06ee4421fd29ad7761f7158cb0ea9bc05dbe8,n/a,
+hindi_ai_000,hindi,ai,,gtts,,hindi_000,4.008,24000,data/ai/hindi/hindi_ai_000.mp3,51892f805c7eea6ffbb486d1c2fffe0098c42b9de45ee49056d252b160598cee,n/a,
+hindi_ai_001,hindi,ai,,edge-tts,hi-IN-SwaraNeural,hindi_001,4.488,24000,data/ai/hindi/hindi_ai_001.mp3,b94f35a7954bca76cf6aeb8ae1e75a3f7e63c66c84061ea544822810c62341ca,n/a,
+hindi_ai_002,hindi,ai,,pyttsx3,,hindi_002,4.344,24000,data/ai/hindi/hindi_ai_002.mp3,d6b6aeabb3e8f478b4b7399cfbd5993d8e5a58c26205b9a43fbf2242ef45668e,n/a,
+hindi_ai_003,hindi,ai,,gtts,,hindi_003,4.464,24000,data/ai/hindi/hindi_ai_003.mp3,aeabefa24e71af1d45de2bfea56a9f653eb8700cf6bd6073deccd3b1856d8866,n/a,
+hindi_ai_004,hindi,ai,,edge-tts,hi-IN-SwaraNeural,hindi_004,4.176,24000,data/ai/hindi/hindi_ai_004.mp3,72cdbd24b63952d7aa09697fc82f4aa33aa4032be4396f09e40946fca0a59311,n/a,
+hindi_ai_005,hindi,ai,,pyttsx3,,hindi_005,4.272,24000,data/ai/hindi/hindi_ai_005.mp3,28ab7b73232233462a05e9d209223ab77d18da2a124ea5133e29d56feb730d73,n/a,
+hindi_ai_006,hindi,ai,,gtts,,hindi_006,3.912,24000,data/ai/hindi/hindi_ai_006.mp3,b4b6cff4d9ba4a370f088593ab111aefd335d935012760e3d14172d1a71e6e93,n/a,
+hindi_ai_007,hindi,ai,,edge-tts,hi-IN-SwaraNeural,hindi_007,4.152,24000,data/ai/hindi/hindi_ai_007.mp3,462c5a8dd257ff13445f466aabbd29758a78eaf0685b1dbe5e296749f725ec7a,n/a,
+hindi_ai_008,hindi,ai,,pyttsx3,,hindi_008,4.056,24000,data/ai/hindi/hindi_ai_008.mp3,e21a5c7e240dd6ca5872829935b5083572a895b29349d776bcd020db18de199b,n/a,
+hindi_ai_009,hindi,ai,,gtts,,hindi_009,4.536,24000,data/ai/hindi/hindi_ai_009.mp3,d3744a5ff8b3228e3e3df1904ac14f6cd064551ca78f2832ef0e67972a693a1a,n/a,
+malayalam_ai_000,malayalam,ai,,gtts,,malayalam_000,3.672,24000,data/ai/malayalam/malayalam_ai_000.mp3,5a11a55dcf4da7710e375bad398deff489f8b6e43f246415ea2d40c3deaf5ef0,n/a,
+malayalam_ai_001,malayalam,ai,,edge-tts,ml-IN-MidhunNeural,malayalam_001,3.456,24000,data/ai/malayalam/malayalam_ai_001.mp3,233fee074399d5fd0d904e59d8104517d136d8bf62dd754e3f5b4aaf4728bef9,n/a,
+malayalam_ai_002,malayalam,ai,,pyttsx3,,malayalam_002,3.864,24000,data/ai/malayalam/malayalam_ai_002.mp3,d3ab7303a64d1dc79e390aebef6d0a10aa09927bfc8809c7bfbedb0ca7ff8b51,n/a,
+malayalam_ai_003,malayalam,ai,,gtts,,malayalam_003,3.384,24000,data/ai/malayalam/malayalam_ai_003.mp3,96fbc86e75a2d80e00946bb65b25950217bbe9653d82eb4f6c2be58ec67e3f83,n/a,
+malayalam_ai_004,malayalam,ai,,edge-tts,ml-IN-MidhunNeural,malayalam_004,3.336,24000,data/ai/malayalam/malayalam_ai_004.mp3,c1e3abfb526f8fe646785d37c409cfae6722d667c99b8843ac2f23ab00b691e0,n/a,
+malayalam_ai_005,malayalam,ai,,pyttsx3,,malayalam_005,3.240,24000,data/ai/malayalam/malayalam_ai_005.mp3,cdf9c4167ea7ed46a81b4894ea522b1db5c304849e4211f635e1944addd9151e,n/a,
+malayalam_ai_006,malayalam,ai,,gtts,,malayalam_006,3.144,24000,data/ai/malayalam/malayalam_ai_006.mp3,1033f6ea1c793cabb72e85b3c5be23ac53fc541a0fcca242fe5e4eb8fa26517d,n/a,
+malayalam_ai_007,malayalam,ai,,edge-tts,ml-IN-MidhunNeural,malayalam_007,3.864,24000,data/ai/malayalam/malayalam_ai_007.mp3,a43af3cfab1535ef38d7dca218551103e370ceff2d9e943ee40aa00a2a4405b8,n/a,
+malayalam_ai_008,malayalam,ai,,pyttsx3,,malayalam_008,3.528,24000,data/ai/malayalam/malayalam_ai_008.mp3,05a7fea7505900fe4fff834e9f0e455f73cefe821cafd66b29041656da407808,n/a,
+malayalam_ai_009,malayalam,ai,,gtts,,malayalam_009,3.648,24000,data/ai/malayalam/malayalam_ai_009.mp3,d5649f047928f6ae8f6dce6baf5e7c25ac4923246fb2bfc447eb4e92df457313,n/a,
+telugu_ai_000,telugu,ai,,gtts,,telugu_000,4.680,24000,data/ai/telugu/telugu_ai_000.mp3,2a7dae2ab5f37b26077e34b7575dd66be9ce285ce0bb10cb8106ff2fa75a7e0a,n/a,
+telugu_ai_001,telugu,ai,,edge-tts,te-IN-ShrutiNeural,telugu_001,3.312,24000,data/ai/telugu/telugu_ai_001.mp3,e3b781849c17a537435d2f4f0e8cbc4d3de815db43dc93f0f999764fc4e05bdf,n/a,
+telugu_ai_002,telugu,ai,,pyttsx3,,telugu_002,3.792,24000,data/ai/telugu/telugu_ai_002.mp3,bf8b68613cf3dca786ebef9cd05f3158ff8c962b2ea87631ca896c5b6d3b5eb9,n/a,
+telugu_ai_003,telugu,ai,,gtts,,telugu_003,4.344,24000,data/ai/telugu/telugu_ai_003.mp3,7d19da274ff674dce7b127868aea61ffbc929e607d6e24bf61de275d84a22b18,n/a,
+telugu_ai_004,telugu,ai,,edge-tts,te-IN-ShrutiNeural,telugu_004,3.576,24000,data/ai/telugu/telugu_ai_004.mp3,01f450f8009c7f8ab9576072e5c526def2fc4cb86b590ade5c9644d9f027cab3,n/a,
+telugu_ai_005,telugu,ai,,pyttsx3,,telugu_005,4.056,24000,data/ai/telugu/telugu_ai_005.mp3,3acea2991ed85c886d89f0a719a311e0fd8877381c490e6216c1684e2ac04faa,n/a,
+telugu_ai_006,telugu,ai,,gtts,,telugu_006,4.872,24000,data/ai/telugu/telugu_ai_006.mp3,40ab2a5653086a1f190e4dd7f0cadd5590c67481bfd89ed73598f519ac3f3649,n/a,
+telugu_ai_007,telugu,ai,,edge-tts,te-IN-ShrutiNeural,telugu_007,3.024,24000,data/ai/telugu/telugu_ai_007.mp3,1afbcecd64707a7212785845f62255da1bf9921da8a71b6b0fbc870924a7b82c,n/a,
+telugu_ai_008,telugu,ai,,pyttsx3,,telugu_008,3.792,24000,data/ai/telugu/telugu_ai_008.mp3,48f1ca1fa90d25b52abc4f6d6c19dd99c38c0f92ef8bac251a321e63a8ebdbfc,n/a,
+telugu_ai_009,telugu,ai,,gtts,,telugu_009,4.728,24000,data/ai/telugu/telugu_ai_009.mp3,5417687dfa24673bfbb9ec3814ab0cc4616f493aa8b1552649cd40ba28f98150,n/a,
+tamil_ai_000,tamil,ai,,gtts,,tamil_000,20.736,24000,data/ai/tamil/tamil_ai_000.mp3,655f28ee084eb1bc9fdd8c80fcd2ece6129101e47382a4893cff64d89e283a1b,n/a,
+tamil_ai_001,tamil,ai,,edge-tts,ta-IN-PallaviNeural,tamil_001,19.896,24000,data/ai/tamil/tamil_ai_001.mp3,41f1ec7253c4882773010143fc6274fa35aea9e61099a95cf2bb1537ca172fde,n/a,
+tamil_ai_002,tamil,ai,,pyttsx3,,tamil_002,21.336,24000,data/ai/tamil/tamil_ai_002.mp3,8010bd6217e918e08aaca53f170cc2692387fa9212cae80560f5d53e721c0279,n/a,
+tamil_ai_003,tamil,ai,,gtts,,tamil_003,21.360,24000,data/ai/tamil/tamil_ai_003.mp3,4e89220c21c75356b3652f060830209671a6d8fbec5d4a0c481269f7503b6675,n/a,
+tamil_ai_004,tamil,ai,,edge-tts,ta-IN-PallaviNeural,tamil_004,20.376,24000,data/ai/tamil/tamil_ai_004.mp3,fde868e60f0ebb02d847bfee4c811942220111bbbd2f4a7613d00e1c42e17d39,n/a,
+tamil_ai_005,tamil,ai,,pyttsx3,,tamil_005,22.776,24000,data/ai/tamil/tamil_ai_005.mp3,aabdecb03dc3a93984f8e08f65e09d6b9e347e3e2cbc31a8ff31494ff6e49137,n/a,
+tamil_ai_006,tamil,ai,,gtts,,tamil_006,22.464,24000,data/ai/tamil/tamil_ai_006.mp3,ee7ce526ee65526b0ebbfa0911dd6efcd5ead66a60e838aae6c45e3c903a86fb,n/a,
+tamil_ai_007,tamil,ai,,edge-tts,ta-IN-PallaviNeural,tamil_007,20.472,24000,data/ai/tamil/tamil_ai_007.mp3,65b777336eeef5c770d38546f92141b82dddcf257647d74cdfee9ea916169e2a,n/a,
+tamil_ai_008,tamil,ai,,pyttsx3,,tamil_008,21.840,24000,data/ai/tamil/tamil_ai_008.mp3,1feb586984df6377f4242cfa04358ac16169b54be272f46333e7a5f30cad1c66,n/a,
+tamil_ai_009,tamil,ai,,gtts,,tamil_009,21.960,24000,data/ai/tamil/tamil_ai_009.mp3,8e4645de68d1399edf52b39d125df30e92db1f21c4b7dd61e2d4aa9e2d713177,n/a,
+english_ai_000,english,ai,,gtts,,english_000,13.560,24000,data/ai/english/english_ai_000.mp3,40b34e27accb321dd4b9e49dbaf37d80e88df58059034c445501e0311bea19b8,n/a,
+english_ai_001,english,ai,,edge-tts,en-US-AriaNeural,english_001,10.032,24000,data/ai/english/english_ai_001.mp3,4d78a7d743277188b2075064104adedb58b422618929f7fed91349f7343490c3,n/a,
+english_ai_002,english,ai,,pyttsx3,,english_002,9.912,24000,data/ai/english/english_ai_002.mp3,912beefeac08ea3178e13efd2352f73e350b2b12ed2b8b1f3c3ffc0330e49dfa,n/a,
+english_ai_003,english,ai,,gtts,,english_003,9.768,24000,data/ai/english/english_ai_003.mp3,20f5bb76386d26a4ff0736562a3521206c5b7800773542652f1933e79339fc8e,n/a,
+english_ai_004,english,ai,,edge-tts,en-US-AriaNeural,english_004,11.136,24000,data/ai/english/english_ai_004.mp3,c5cfe3487d2439103081eab929347bd320883909c5329015a60be59f9148f81f,n/a,
+english_ai_005,english,ai,,pyttsx3,,english_005,11.040,24000,data/ai/english/english_ai_005.mp3,d76250f2850706a478d00b27418b68d44106d2c68a076c301d114940997d977c,n/a,
+english_ai_006,english,ai,,gtts,,english_006,10.920,24000,data/ai/english/english_ai_006.mp3,b06b928ef2d1e871ff4580fa2bee52897b0d66aaf9c2634f9e3cd3949b2ffb5a,n/a,
+english_ai_007,english,ai,,edge-tts,en-US-AriaNeural,english_007,13.632,24000,data/ai/english/english_ai_007.mp3,02377912a68ed8f0ed530ac66eaa832cf576ac3d03adecc26de3a76805f42d15,n/a,
+english_ai_008,english,ai,,pyttsx3,,english_008,13.944,24000,data/ai/english/english_ai_008.mp3,536f816ad270befebe60e4171bc8066c99a6214266041fabaed25e758053fb35,n/a,
+english_ai_009,english,ai,,gtts,,english_009,13.488,24000,data/ai/english/english_ai_009.mp3,95ae110ab9806f544730710f75524bcc530aeeba470d1cafa831515304b9cc50,n/a,
+hindi_ai_000,hindi,ai,,gtts,,hindi_000,12.648,24000,data/ai/hindi/hindi_ai_000.mp3,7afae5c860495c2f75062aa0860cf3a180dc7fc1ec0163ff11718512a50f856a,n/a,
+hindi_ai_001,hindi,ai,,edge-tts,hi-IN-SwaraNeural,hindi_001,14.376,24000,data/ai/hindi/hindi_ai_001.mp3,86ed7f80ac59512289b59b5188918ba003f4d725f41b73c7bd9927ecb377c21c,n/a,
+hindi_ai_002,hindi,ai,,pyttsx3,,hindi_002,13.032,24000,data/ai/hindi/hindi_ai_002.mp3,35c8debf1016a9084e6e387e1a5ad2877578a682cff5ce35ea57fd9173236193,n/a,
+hindi_ai_003,hindi,ai,,gtts,,hindi_003,12.984,24000,data/ai/hindi/hindi_ai_003.mp3,f14f998edc079dccea982a6b08619404abf2a5a816602be5f8d4ddbaafd612b7,n/a,
+hindi_ai_004,hindi,ai,,edge-tts,hi-IN-SwaraNeural,hindi_004,12.936,24000,data/ai/hindi/hindi_ai_004.mp3,3317cab16479768ba624904b8ff2fe1306497dc008e2326274181693831b735d,n/a,
+hindi_ai_005,hindi,ai,,pyttsx3,,hindi_005,11.832,24000,data/ai/hindi/hindi_ai_005.mp3,956be69e8d75bfb3bc817647ab70793d102839dfadb33214b37a5bc32b5eeee7,n/a,
+hindi_ai_006,hindi,ai,,gtts,,hindi_006,12.096,24000,data/ai/hindi/hindi_ai_006.mp3,ed0b61f151d5aadb4e323d2c040f174f117411744dbfb3f53d47d9674c537627,n/a,
+hindi_ai_007,hindi,ai,,edge-tts,hi-IN-SwaraNeural,hindi_007,13.200,24000,data/ai/hindi/hindi_ai_007.mp3,f516ab3bc1df9ddfa6bf22cb5d85d8f36c75c34793ff4ca09891e9ea6f9e4145,n/a,
+hindi_ai_008,hindi,ai,,pyttsx3,,hindi_008,16.344,24000,data/ai/hindi/hindi_ai_008.mp3,6d52d7854612818374e7bf49095c7ca1c31493433f32cc83cc86374855114b99,n/a,
+hindi_ai_009,hindi,ai,,gtts,,hindi_009,15.144,24000,data/ai/hindi/hindi_ai_009.mp3,d3564be06ced77993ac3c80621d426249855e691523613ccc63ef1d822b9a686,n/a,
+malayalam_ai_000,malayalam,ai,,gtts,,malayalam_000,17.448,24000,data/ai/malayalam/malayalam_ai_000.mp3,b9e9f26bd0a9bd1e053492e163bed7d391c2ea4685f9d6a8fbb1ffa30e1b29ce,n/a,
+malayalam_ai_001,malayalam,ai,,edge-tts,ml-IN-MidhunNeural,malayalam_001,16.848,24000,data/ai/malayalam/malayalam_ai_001.mp3,0e4c2d8a33e9e12d739efe63483ea03e8af29adb4be2ce8e837c44307d556492,n/a,
+malayalam_ai_002,malayalam,ai,,pyttsx3,,malayalam_002,16.752,24000,data/ai/malayalam/malayalam_ai_002.mp3,bc1a92bc3e1a082e6205f73a12b83bd92227abe6e7c7597ec5a32efe68637540,n/a,
+malayalam_ai_003,malayalam,ai,,gtts,,malayalam_003,16.848,24000,data/ai/malayalam/malayalam_ai_003.mp3,ba0c2ec70a6ab6534f1311e3c52f7227950f235c1b57d97b5dbeb0f0c75ac543,n/a,
+malayalam_ai_004,malayalam,ai,,edge-tts,ml-IN-MidhunNeural,malayalam_004,16.680,24000,data/ai/malayalam/malayalam_ai_004.mp3,64aa8798749ff7462cb5fd38aeccfa4a75b71fb768e06b467d13917988f331b2,n/a,
+malayalam_ai_005,malayalam,ai,,pyttsx3,,malayalam_005,17.184,24000,data/ai/malayalam/malayalam_ai_005.mp3,987007d94cb23b9ef1e11d6b56038785cc7d5c9b461b6de26b8202f849d3746e,n/a,
+malayalam_ai_006,malayalam,ai,,gtts,,malayalam_006,18.024,24000,data/ai/malayalam/malayalam_ai_006.mp3,b467a586fcb1328c8afff7ca88711d4635eecd4b021d474bcd66676ec75e794d,n/a,
+malayalam_ai_007,malayalam,ai,,edge-tts,ml-IN-MidhunNeural,malayalam_007,17.856,24000,data/ai/malayalam/malayalam_ai_007.mp3,cec122f7c0f302dada34235fd5142745a00ec8836adddcd276389bf1d3113602,n/a,
+malayalam_ai_008,malayalam,ai,,pyttsx3,,malayalam_008,17.784,24000,data/ai/malayalam/malayalam_ai_008.mp3,9652c6ddae9a2432a4b1f1c9297095b9f32cbe2fc7e8585217174c8ceec138ff,n/a,
+malayalam_ai_009,malayalam,ai,,gtts,,malayalam_009,17.760,24000,data/ai/malayalam/malayalam_ai_009.mp3,0bc124d5e5b6aa53b92690ed92a6327aa9a6a72a3bdde47b6a1be8a25c9ed1f8,n/a,
+telugu_ai_000,telugu,ai,,gtts,,telugu_000,21.192,24000,data/ai/telugu/telugu_ai_000.mp3,fb1f15866086053491fac1a755dafbd18aeab38c8f22646c3bd5535cd7f5fa32,n/a,
+telugu_ai_001,telugu,ai,,edge-tts,te-IN-ShrutiNeural,telugu_001,19.104,24000,data/ai/telugu/telugu_ai_001.mp3,55ff9bb486ae422c50277d90258f79528f23edaf243a11c3d6f66407dddd84e0,n/a,
+telugu_ai_002,telugu,ai,,pyttsx3,,telugu_002,21.216,24000,data/ai/telugu/telugu_ai_002.mp3,59c893864a76d8fbc9af248d49389555251c8b5c82e10aec848593007fe32d2d,n/a,
+telugu_ai_003,telugu,ai,,gtts,,telugu_003,17.496,24000,data/ai/telugu/telugu_ai_003.mp3,9cdcd3fbd5d4a8752c594d21aa5dac71d2b3ef0b96e5aa3424ee747e3ce4164b,n/a,
+telugu_ai_004,telugu,ai,,edge-tts,te-IN-ShrutiNeural,telugu_004,19.512,24000,data/ai/telugu/telugu_ai_004.mp3,18e671c182518fdfcd4515e49d36066f1dea87ec4d734b59a50f8c28889cd43f,n/a,
+telugu_ai_005,telugu,ai,,pyttsx3,,telugu_005,16.464,24000,data/ai/telugu/telugu_ai_005.mp3,e1236d660ffc3f64b22a48f78c6d7fe29cfd023c3958014f458ca28e9e8645e1,n/a,
+telugu_ai_006,telugu,ai,,gtts,,telugu_006,17.160,24000,data/ai/telugu/telugu_ai_006.mp3,015cd0807e4adac0ef54d2fc2403a9abfd5460cc2fa6595db91d0dbdcf808fbf,n/a,
+telugu_ai_007,telugu,ai,,edge-tts,te-IN-ShrutiNeural,telugu_007,15.504,24000,data/ai/telugu/telugu_ai_007.mp3,18c5d0bbb677083b70e92ea494b515950584a929991e6d4436ad5d15124f48a0,n/a,
+telugu_ai_008,telugu,ai,,pyttsx3,,telugu_008,17.688,24000,data/ai/telugu/telugu_ai_008.mp3,762715d4b91526065d19e1d6cffe78de5bdf2d1f6ea75027e52d01b62808385a,n/a,
+telugu_ai_009,telugu,ai,,gtts,,telugu_009,17.784,24000,data/ai/telugu/telugu_ai_009.mp3,b883a55058eafde4e6808959262b3df85684b4a337cfb0643105dae3073e2ffd,n/a,
+tamil_proto_000,tamil,human,proto,,,,0.0,0,data/human/tamil/tamil_proto_000.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+tamil_proto_001,tamil,human,proto,,,,0.0,0,data/human/tamil/tamil_proto_001.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+tamil_proto_002,tamil,human,proto,,,,0.0,0,data/human/tamil/tamil_proto_002.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+tamil_proto_003,tamil,human,proto,,,,0.0,0,data/human/tamil/tamil_proto_003.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+tamil_proto_004,tamil,human,proto,,,,0.0,0,data/human/tamil/tamil_proto_004.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+tamil_proto_005,tamil,human,proto,,,,0.0,0,data/human/tamil/tamil_proto_005.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+tamil_proto_006,tamil,human,proto,,,,0.0,0,data/human/tamil/tamil_proto_006.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+tamil_proto_007,tamil,human,proto,,,,0.0,0,data/human/tamil/tamil_proto_007.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+tamil_proto_008,tamil,human,proto,,,,0.0,0,data/human/tamil/tamil_proto_008.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+tamil_proto_009,tamil,human,proto,,,,0.0,0,data/human/tamil/tamil_proto_009.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+english_proto_000,english,human,proto,,,,0.0,0,data/human/english/english_proto_000.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+english_proto_001,english,human,proto,,,,0.0,0,data/human/english/english_proto_001.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+english_proto_002,english,human,proto,,,,0.0,0,data/human/english/english_proto_002.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+english_proto_003,english,human,proto,,,,0.0,0,data/human/english/english_proto_003.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+english_proto_004,english,human,proto,,,,0.0,0,data/human/english/english_proto_004.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+english_proto_005,english,human,proto,,,,0.0,0,data/human/english/english_proto_005.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+english_proto_006,english,human,proto,,,,0.0,0,data/human/english/english_proto_006.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+english_proto_007,english,human,proto,,,,0.0,0,data/human/english/english_proto_007.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+english_proto_008,english,human,proto,,,,0.0,0,data/human/english/english_proto_008.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+english_proto_009,english,human,proto,,,,0.0,0,data/human/english/english_proto_009.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+hindi_proto_000,hindi,human,proto,,,,0.0,0,data/human/hindi/hindi_proto_000.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+hindi_proto_001,hindi,human,proto,,,,0.0,0,data/human/hindi/hindi_proto_001.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+hindi_proto_002,hindi,human,proto,,,,0.0,0,data/human/hindi/hindi_proto_002.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+hindi_proto_003,hindi,human,proto,,,,0.0,0,data/human/hindi/hindi_proto_003.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+hindi_proto_004,hindi,human,proto,,,,0.0,0,data/human/hindi/hindi_proto_004.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+hindi_proto_005,hindi,human,proto,,,,0.0,0,data/human/hindi/hindi_proto_005.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+hindi_proto_006,hindi,human,proto,,,,0.0,0,data/human/hindi/hindi_proto_006.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+hindi_proto_007,hindi,human,proto,,,,0.0,0,data/human/hindi/hindi_proto_007.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+hindi_proto_008,hindi,human,proto,,,,0.0,0,data/human/hindi/hindi_proto_008.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+hindi_proto_009,hindi,human,proto,,,,0.0,0,data/human/hindi/hindi_proto_009.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+malayalam_proto_000,malayalam,human,proto,,,,0.0,0,data/human/malayalam/malayalam_proto_000.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+malayalam_proto_001,malayalam,human,proto,,,,0.0,0,data/human/malayalam/malayalam_proto_001.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+malayalam_proto_002,malayalam,human,proto,,,,0.0,0,data/human/malayalam/malayalam_proto_002.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+malayalam_proto_003,malayalam,human,proto,,,,0.0,0,data/human/malayalam/malayalam_proto_003.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+malayalam_proto_004,malayalam,human,proto,,,,0.0,0,data/human/malayalam/malayalam_proto_004.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+malayalam_proto_005,malayalam,human,proto,,,,0.0,0,data/human/malayalam/malayalam_proto_005.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+malayalam_proto_006,malayalam,human,proto,,,,0.0,0,data/human/malayalam/malayalam_proto_006.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+malayalam_proto_007,malayalam,human,proto,,,,0.0,0,data/human/malayalam/malayalam_proto_007.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+malayalam_proto_008,malayalam,human,proto,,,,0.0,0,data/human/malayalam/malayalam_proto_008.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+malayalam_proto_009,malayalam,human,proto,,,,0.0,0,data/human/malayalam/malayalam_proto_009.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+telugu_proto_000,telugu,human,proto,,,,0.0,0,data/human/telugu/telugu_proto_000.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+telugu_proto_001,telugu,human,proto,,,,0.0,0,data/human/telugu/telugu_proto_001.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+telugu_proto_002,telugu,human,proto,,,,0.0,0,data/human/telugu/telugu_proto_002.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+telugu_proto_003,telugu,human,proto,,,,0.0,0,data/human/telugu/telugu_proto_003.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+telugu_proto_004,telugu,human,proto,,,,0.0,0,data/human/telugu/telugu_proto_004.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+telugu_proto_005,telugu,human,proto,,,,0.0,0,data/human/telugu/telugu_proto_005.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+telugu_proto_006,telugu,human,proto,,,,0.0,0,data/human/telugu/telugu_proto_006.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+telugu_proto_007,telugu,human,proto,,,,0.0,0,data/human/telugu/telugu_proto_007.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+telugu_proto_008,telugu,human,proto,,,,0.0,0,data/human/telugu/telugu_proto_008.mp3,,synthetic_prototype,duplicated from AI for pipeline demo
+telugu_proto_009,telugu,human,proto,,,,0.0,0,data/human/telugu/telugu_proto_009.mp3,,synthetic_prototype,duplicated from AI for pipeline demo

@@ -1,0 +1,82 @@
+﻿{
+    "baseUrl":  "https://sparkling-caring-guiv-hackathon.up.railway.app",
+    "checklist":  {
+                      "health_ok":  false,
+                      "base64_x_api_key_ok":  true,
+                      "response_format_ok":  false,
+                      "url_bearer_ok":  false,
+                      "base64_bearer_ok":  true,
+                      "latency_ok":  true,
+                      "url_x_api_key_ok":  false
+                  },
+    "results":  {
+                    "base64_x_api_key":  {
+                                             "status_code":  200,
+                                             "json":  {
+                                                          "status":  "success",
+                                                          "language":  "English",
+                                                          "classification":  "AI_GENERATED",
+                                                          "confidenceScore":  1.0,
+                                                          "explanation":  "Low micro-jitter typical of synthetic speech; Abrupt temporal transitions detected",
+                                                          "audioQuality":  {
+                                                                               "formatValid":  true,
+                                                                               "sampleRateSuspect":  false,
+                                                                               "shortAudio":  false,
+                                                                               "durationSeconds":  2.07421768707483,
+                                                                               "sampleRate":  44100,
+                                                                               "channels":  2
+                                                                           }
+                                                      },
+                                             "elapsed_ms":  760
+                                         },
+                    "url_mdn_x_api_key":  {
+                                              "error":  "The remote server returned an error: (502) Bad Gateway.",
+                                              "body":  "",
+                                              "status_code":  502,
+                                              "elapsed_ms":  204
+                                          },
+                    "url_soundhelix_x_api_key":  {
+                                                     "error":  "The remote server returned an error: (502) Bad Gateway.",
+                                                     "body":  "",
+                                                     "status_code":  502,
+                                                     "elapsed_ms":  171
+                                                 },
+                    "health":  {
+                                   "error":  "Cannot send a content-body with this verb-type.",
+                                   "body":  null,
+                                   "status_code":  -1,
+                                   "elapsed_ms":  3
+                               },
+                    "url_mdn_bearer":  {
+                                           "error":  "The remote server returned an error: (502) Bad Gateway.",
+                                           "body":  "",
+                                           "status_code":  502,
+                                           "elapsed_ms":  208
+                                       },
+                    "base64_bearer":  {
+                                          "status_code":  200,
+                                          "json":  {
+                                                       "status":  "success",
+                                                       "language":  "English",
+                                                       "classification":  "AI_GENERATED",
+                                                       "confidenceScore":  1.0,
+                                                       "explanation":  "Low micro-jitter typical of synthetic speech; Abrupt temporal transitions detected",
+                                                       "audioQuality":  {
+                                                                            "formatValid":  true,
+                                                                            "sampleRateSuspect":  false,
+                                                                            "shortAudio":  false,
+                                                                            "durationSeconds":  2.07421768707483,
+                                                                            "sampleRate":  44100,
+                                                                            "channels":  2
+                                                                        }
+                                                   },
+                                          "elapsed_ms":  3649
+                                      },
+                    "url_soundhelix_bearer":  {
+                                                  "error":  "The remote server returned an error: (502) Bad Gateway.",
+                                                  "body":  "",
+                                                  "status_code":  502,
+                                                  "elapsed_ms":  4602
+                                              }
+                }
+}

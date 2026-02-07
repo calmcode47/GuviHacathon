@@ -1,0 +1,23 @@
+﻿{
+    "selectedBaseUrl":  "https://sparkling-caring-guvi-hackathon.up.railway.app",
+    "tests":  {
+                  "url_bearer_tiny":  {
+                                          "error":  "The remote server returned an error: (404) Not Found.",
+                                          "body":  "",
+                                          "status_code":  404,
+                                          "elapsed_ms":  158
+                                      },
+                  "health":  {
+                                 "error":  "The remote server returned an error: (404) Not Found.",
+                                 "body":  "",
+                                 "status_code":  404,
+                                 "elapsed_ms":  419
+                             },
+                  "url_x_api_key_tiny":  {
+                                             "error":  "The remote server returned an error: (404) Not Found.",
+                                             "body":  "",
+                                             "status_code":  404,
+                                             "elapsed_ms":  207
+                                         }
+              }
+}

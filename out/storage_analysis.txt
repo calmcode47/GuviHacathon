@@ -1,0 +1,25 @@
+﻿Storage-Related Files Analysis
+
+- dataset/data_setup.py: Creates data directories and writes .gitkeep for empty dirs.
+- dataset/data_loader.py: Scans MP3s, caches features to NPZ at data/cache/features.npz, writes splits JSON.
+- dataset/download_open_datasets.py: Saves MP3s to data/human/<lang>, computes SHA256, appends rows to data/metadata.csv.
+- dataset/validate_dataset.py: Validates dataset and writes CSV reports (validation_report.csv, split_recommendations.csv).
+- dataset/generate_ai_samples.py: Reads corpus text and writes AI-generated MP3s into data/ai/<lang> using TTS engines.
+- dataset/normalize_human_samples.py: Scans MP3s and normalizes filenames/paths, updates metadata when needed.
+- dataset/duplicate_ai_as_human.py: Copies AI samples into human/ proto folders and records metadata.
+- dataset/train.py: Trains model; saves weights.pkl and report.json under training_out/.
+- dataset/train_model.py: Trains directly and writes JSON model to app/model/model.json.
+- dataset/export_weights_to_json.py: Converts weights.pkl to model.json; ensures app/model/ exists and writes JSON.
+- dataset/evaluate.py: Loads dataset and weights; writes evaluation_out metrics and plots.
+- dataset/update_classifier.py: Writes updated weights into app/services/classifier.py and creates a backup .bak file.
+- app/services/classifier.py: Loads model.json from env MODEL_PATH or app/model/model.json; defaults if missing.
+- app/main.py: Health endpoint checks model file existence; references filesystem path.
+- app/utils/url_downloader.py: Downloads MP3 bytes from URL strictly in-memory; validates headers; no disk writes.
+- update_submission_bundle.py: Copies code and docs into submission/ for packaging.
+- data/metadata.csv: Central metadata registry for dataset entries.
+- evaluation_out/metrics.json: Evaluation results written by dataset/evaluate.py.
+
+Notes
+- No secrets are stored in files; environment variables control API key and model path.
+- File paths use pathlib/os; directories are created before writes to prevent errors.
+- Model loading prefers an explicit MODEL_PATH; otherwise app/model/model.json is used.

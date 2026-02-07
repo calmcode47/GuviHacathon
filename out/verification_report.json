@@ -1,0 +1,59 @@
+﻿{
+    "selectedBaseUrl":  "https://sparkling-caring-guiv-hackathon.up.railway.app",
+    "tests":  {
+                  "url_bearer":  {
+                                     "error":  "The remote server returned an error: (502) Bad Gateway.",
+                                     "body":  "",
+                                     "status_code":  502,
+                                     "elapsed_ms":  21866
+                                 },
+                  "base64_x_api_key":  {
+                                           "status_code":  200,
+                                           "json":  {
+                                                        "status":  "success",
+                                                        "language":  "English",
+                                                        "classification":  "AI_GENERATED",
+                                                        "confidenceScore":  1.0,
+                                                        "explanation":  "Low micro-jitter typical of synthetic speech; Abrupt temporal transitions detected",
+                                                        "audioQuality":  {
+                                                                             "formatValid":  true,
+                                                                             "sampleRateSuspect":  false,
+                                                                             "shortAudio":  false,
+                                                                             "durationSeconds":  2.07421768707483,
+                                                                             "sampleRate":  44100,
+                                                                             "channels":  2
+                                                                         }
+                                                    },
+                                           "elapsed_ms":  6009
+                                       },
+                  "health":  {
+                                 "status_code":  200,
+                                 "json":  {
+                                              "status":  "ok",
+                                              "model_loaded":  false
+                                          },
+                                 "elapsed_ms":  105
+                             },
+                  "url_x_api_key":  {
+                                        "error":  "The remote server returned an error: (502) Bad Gateway.",
+                                        "body":  "",
+                                        "status_code":  502,
+                                        "elapsed_ms":  164
+                                    },
+                  "base64_bearer":  {
+                                        "error":  "The remote server returned an error: (502) Bad Gateway.",
+                                        "body":  "",
+                                        "status_code":  502,
+                                        "elapsed_ms":  240
+                                    }
+              },
+    "checklist":  {
+                      "health_ok":  true,
+                      "base64_x_api_key_ok":  true,
+                      "response_format_ok":  false,
+                      "url_bearer_ok":  false,
+                      "base64_bearer_ok":  false,
+                      "latency_ok":  false,
+                      "url_x_api_key_ok":  false
+                  }
+}
