@@ -95,7 +95,7 @@
             font-weight: 600;
         }
         
-        select, button {
+        select, input, button {
             width: 100%;
             padding: 12px;
             border-radius: 8px;
@@ -234,6 +234,19 @@
             </select>
         </div>
         
+        <div class="form-group">
+            <label for="inputType">Input Type:</label>
+            <select id="inputType">
+                <option value="file">File Upload</option>
+                <option value="url">Audio URL</option>
+            </select>
+        </div>
+        
+        <div class="form-group" id="urlGroup" style="display:none;">
+            <label for="urlInput">Audio URL (MP3):</label>
+            <input id="urlInput" type="text" placeholder="https://example.com/sample.mp3" />
+        </div>
+        
         <button class="analyze-btn" id="analyzeBtn" disabled>Analyze Voice</button>
         
         <div class="loading" id="loading">
@@ -271,11 +284,41 @@
         const resultTitle = document.getElementById('resultTitle');
         const confidence = document.getElementById('confidence');
         const explanation = document.getElementById('explanation');
+        const inputType = document.getElementById('inputType');
+        const urlGroup = document.getElementById('urlGroup');
+        const urlInput = document.getElementById('urlInput');
         
         let selectedFile = null;
+        let selectedUrl = '';
+        
+        function isValidUrl(s) {
+            return /^https?:\/\/.+/i.test(s);
+        }
+        
+        inputType.addEventListener('change', () => {
+            const mode = inputType.value;
+            if (mode === 'file') {
+                urlGroup.style.display = 'none';
+                analyzeBtn.disabled = !selectedFile;
+                uploadArea.style.display = 'block';
+            } else {
+                urlGroup.style.display = 'block';
+                uploadArea.style.display = 'none';
+                analyzeBtn.disabled = !isValidUrl(urlInput.value);
+            }
+        });
+        
+        urlInput.addEventListener('input', () => {
+            selectedUrl = urlInput.value.trim();
+            if (inputType.value === 'url') {
+                analyzeBtn.disabled = !isValidUrl(selectedUrl);
+            }
+        });
         
         // Upload area events
-        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('click', () => {
+            if (inputType.value === 'file') fileInput.click();
+        });
         
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -322,27 +365,27 @@
         }
         
         analyzeBtn.addEventListener('click', async () => {
-            if (!selectedFile) return;
+            const language = document.getElementById('language').value;
+            const mode = inputType.value;
+            if (mode === 'file' && !selectedFile) return;
+            if (mode === 'url' && !isValidUrl(urlInput.value)) return;
             
             loading.style.display = 'block';
             result.style.display = 'none';
             analyzeBtn.disabled = true;
             
             try {
-                const base64 = await fileToBase64(selectedFile);
-                const language = document.getElementById('language').value;
-                
+                let payload;
+                if (mode === 'file') {
+                    const base64 = await fileToBase64(selectedFile);
+                    payload = { language, audioFormat: 'mp3', audioBase64: base64 };
+                } else {
+                    payload = { language, audioFormat: 'mp3', audioUrl: urlInput.value.trim() };
+                }
                 const response = await fetch('/api/voice-detection', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': 'sk_test_key'
-                    },
-                    body: JSON.stringify({
-                        language: language,
-                        audioFormat: 'mp3',
-                        audioBase64: base64
-                    })
+                    headers: { 'Content-Type': 'application/json', 'x-api-key': 'sk_test_key' },
+                    body: JSON.stringify(payload)
                 });
                 
                 const data = await response.json();
