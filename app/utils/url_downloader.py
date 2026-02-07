@@ -6,6 +6,10 @@ import requests
 MP3_MAGIC_HEADERS = [b"ID3", b"\xff\xfb", b"\xff\xf3", b"\xff\xf2"]
 MAX_DOWNLOAD_BYTES = 50 * 1024 * 1024
 UA = "VoiceDetector/1.0 (+https://railway.app)"
+BROWSER_UA = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+)
 
 
 def _has_mp3_magic_header(audio_bytes: bytes) -> bool:
@@ -28,16 +32,36 @@ def download_mp3_from_url(url: str) -> str:
     """
     if not _validate_url(url):
         raise ValueError("Invalid URL format")
+    parsed = urlparse(url)
+    referer = f"{parsed.scheme}://{parsed.netloc}/"
+    headers_primary = {
+        "User-Agent": UA,
+        "Accept": "audio/mpeg,audio/*;q=0.9,*/*;q=0.8",
+        "Referer": referer,
+    }
+    sess = requests.Session()
+    # First attempt
     try:
-        r = requests.get(url, timeout=30, stream=True, headers={"User-Agent": UA})
+        r = sess.get(url, timeout=30, stream=True, headers=headers_primary, allow_redirects=True)
     except requests.exceptions.Timeout:
         raise TimeoutError("Download timeout after 30s")
     except Exception as e:
         raise RuntimeError(f"Download failed: {str(e)}")
+    if r.status_code == 403:
+        # Retry once with browser-like headers
+        headers_retry = {
+            "User-Agent": BROWSER_UA,
+            "Accept": "*/*",
+            "Referer": referer,
+        }
+        try:
+            r = sess.get(url, timeout=30, stream=True, headers=headers_retry, allow_redirects=True)
+        except requests.exceptions.Timeout:
+            raise TimeoutError("Download timeout after 30s")
+        except Exception as e:
+            raise RuntimeError(f"Download failed: {str(e)}")
     if r.status_code != 200:
         raise RuntimeError(f"Download failed: HTTP {r.status_code}")
-    ctype = r.headers.get("Content-Type", "")
-    # Allow if audio or mpeg; otherwise continue but rely on magic header
     buf = io.BytesIO()
     total = 0
     for chunk in r.iter_content(chunk_size=65536):

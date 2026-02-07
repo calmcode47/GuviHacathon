@@ -34,7 +34,8 @@ def main():
     headers_bearer = {"Authorization": f"Bearer {args.api_key}", "Content-Type": "application/json"}
     headers_api = {"x-api-key": args.api_key, "Content-Type": "application/json"}
     health = get_health(base)
-    url_payload = {"language":"English","audioFormat":"mp3","audioUrl":"https://file-examples.com/wp-content/uploads/2017/11/file_example_MP3_700KB.mp3"}
+    # Prefer a reliable URL host
+    url_payload = {"language":"English","audioFormat":"mp3","audioUrl":"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}
     b64_payload = {"language":"English","audioFormat":"mp3","audioBase64": load_local_b64()}
     res_url_bearer = post_voice(base, headers_bearer, url_payload)
     res_url_api = post_voice(base, headers_api, url_payload)
