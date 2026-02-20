@@ -239,10 +239,14 @@ def decode_base64_mp3_to_pcm(audio_base64: str) -> PCMDecodeResult:
                                     os.remove(wav_path)
                             except Exception:
                                 pass
-                    except Exception as ee:
-                        raise RuntimeError("Failed to decode MP3") from ee
+                    except Exception as e_ffmpeg:
+                        err_msg = f"Failed to decode MP3 even with FFmpeg fallback: {str(e_ffmpeg)}"
+                        logger.error(err_msg)
+                        raise RuntimeError(err_msg) from e_ffmpeg
                 else:
-                    raise RuntimeError("Failed to decode MP3") from e
+                    err_msg = "Failed to decode MP3: FFmpeg is required for fallback but not found on the system."
+                    logger.error(err_msg)
+                    raise RuntimeError(err_msg) from e # Raise from the librosa exception if ffmpeg is not available
         duration = float(frames.shape[1]) / float(sr)
         sr_suspect = not (8000 <= sr <= 48000)
         return PCMDecodeResult(
@@ -263,7 +267,16 @@ def decode_base64_mp3_to_pcm(audio_base64: str) -> PCMDecodeResult:
 
 
 def read_mp3_to_pcm_result(mp3_path: str) -> PCMDecodeResult:
-    frames, sr, ch = _read_mp3_pcm_with_audioread(mp3_path)
+    try:
+        frames, sr, ch = _read_mp3_pcm_with_audioread(mp3_path)
+    except Exception:
+        # Fallback to librosa if audioread fails
+        y, sr = librosa.load(mp3_path, sr=None, mono=True)
+        ch = 1
+        # Convert float32 to int16
+        pcm = np.clip(y * 32768.0, -32768.0, 32767.0).astype(np.int16)
+        frames = pcm.reshape(1, -1)
+        
     duration = float(frames.shape[1]) / float(sr)
     header_ok = True
     sr_suspect = not (8000 <= sr <= 48000)

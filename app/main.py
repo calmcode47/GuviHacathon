@@ -1,4 +1,6 @@
 import os
+import logging
+
 from pathlib import Path
 from typing import Optional
 
@@ -13,6 +15,10 @@ from app.utils.url_downloader import download_mp3_from_url
 from app.services.detector import extract_features_pcm
 from app.services.classifier import get_default_classifier, classify_features
 from app.services.explainer import explain
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
 
 app = FastAPI(title="AI-Generated Voice Detection API", version="1.0.0")
 
@@ -45,10 +51,33 @@ async def health():
         model_path = Path(env_path)
     else:
         model_path = Path(__file__).resolve().parents[1] / "model" / "model.json"
+    
+    from app.utils.audio import _FFMPEG_AVAILABLE
+    
     return {
         "status": "ok",
         "model_loaded": model_path.exists(),
+        "ffmpeg_installed": _FFMPEG_AVAILABLE,
+        "supported_languages": list(SUPPORTED_LANGUAGES)
     }
+
+
+@app.on_event("startup")
+async def startup_event():
+    env_path = os.getenv("MODEL_PATH")
+    model_path = Path(env_path) if env_path else Path(__file__).resolve().parents[1] / "model" / "model.json"
+    from app.utils.audio import _FFMPEG_AVAILABLE
+    
+    logger.info("Starting AI Voice Detection API...")
+    if model_path.exists():
+        logger.info(f"Model found at {model_path}")
+    else:
+        logger.warning(f"No model found at {model_path}. Detection will fail until a model is trained.")
+        
+    if _FFMPEG_AVAILABLE:
+        logger.info("FFmpeg is available on the system.")
+    else:
+        logger.warning("FFmpeg NOT found. MP3 fallback and some TTS decoding will be disabled.")
 
 
 @app.post("/api/voice-detection", response_model=VoiceDetectionResponse, responses={

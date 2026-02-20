@@ -155,10 +155,8 @@ def main() -> None:
         count = 0
         pbar = tqdm(total=args.samples_per_language, desc=f"{lang} AI samples")
         for i in range(args.samples_per_language):
-            if i >= len(sentences):
-                break
             est_words = max(10, int(round(args.min_duration_sec * 2.5)))
-            text = compose_text(sentences, i, est_words)
+            text = compose_text(sentences, i % len(sentences), est_words)
             clip_id = f"{lang}_ai_{i:03d}"
             out_path = os.path.join(out_dir, f"{clip_id}.mp3")
             engine_name = ENGINES[i % len(ENGINES)]

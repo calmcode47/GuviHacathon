@@ -3,7 +3,9 @@ import json
 import argparse
 import logging
 import csv
+import hashlib
 from pathlib import Path
+from typing import Optional, List, Dict
 import numpy as np
 from tqdm import tqdm
 from sklearn.linear_model import LogisticRegression
@@ -57,11 +59,26 @@ def collect_samples(base_dir: str, languages):
     return items
 
 
-def features_for_path(path: str):
+def features_for_path(path: str, cache_dir: Optional[Path] = None):
+    if cache_dir:
+        # Create a stable cache key from the path
+        h = hashlib.md5(path.encode("utf-8")).hexdigest()
+        cache_path = cache_dir / f"{h}.npy"
+        if cache_path.exists():
+            try:
+                return np.load(cache_path)
+            except Exception:
+                pass
+            
     pcm = read_mp3_to_pcm_result(path)
     feats = extract_features_pcm(pcm)
-    v = [float(feats.get(k, 0.0)) for k in FEATURE_NAMES]
-    return np.array(v, dtype=np.float32)
+    v = np.array([float(feats.get(k, 0.0)) for k in FEATURE_NAMES], dtype=np.float32)
+    
+    if cache_dir:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        np.save(cache_path, v)
+        
+    return v
 
 
 def train(X, y):
@@ -127,12 +144,14 @@ def main():
     paths = [p for p, _ in items]
     labels = np.array([l for _, l in items], dtype=np.int32)
     feats = []
+    cache_dir = Path(args.base_dir) / "cache"
     pbar = tqdm(paths, desc="Extracting features")
     for p in pbar:
         try:
-            f = features_for_path(p)
+            f = features_for_path(p, cache_dir=cache_dir)
             feats.append(f)
-        except Exception:
+        except Exception as e:
+            logging.warning(f"Failed to extract features for {p}: {e}")
             feats.append(np.zeros(len(FEATURE_NAMES), dtype=np.float32))
     X = np.vstack(feats)
     classes = np.unique(labels)
