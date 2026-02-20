@@ -16,7 +16,8 @@ COPY app ./app
 
 # Default API key (override via environment variable when deploying)
 ENV API_KEY=sk_test_123456789
+ENV PORT=8000
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
