@@ -10,7 +10,8 @@ import numpy as np
 from tqdm import tqdm
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import roc_auc_score, accuracy_score
+from sklearn.metrics import roc_auc_score, accuracy_score, brier_score_loss
+from sklearn.ensemble import RandomForestClassifier
 from app.core.features import FEATURE_NAMES
 from app.utils.audio import read_mp3_to_pcm_result
 from app.services.detector import extract_features_pcm
@@ -81,35 +82,54 @@ def features_for_path(path: str, cache_dir: Optional[Path] = None):
     return v
 
 
-def train(X, y):
+def train_logistic(X, y):
     mu = np.mean(X, axis=0)
     sigma = np.std(X, axis=0)
     sigma = np.where(sigma < 1e-8, 1.0, sigma)
     Z = (X - mu) / sigma
-    clf = LogisticRegression(max_iter=1000, class_weight="balanced")
+    clf = LogisticRegression(max_iter=1000, class_weight="balanced", C=1.0)
     clf.fit(Z, y)
     w = clf.coef_[0].astype(np.float32)
     b = float(clf.intercept_[0])
     return mu.astype(np.float32), sigma.astype(np.float32), w, b
 
+def calibrate_temperature(mu, sigma, w, b, X_val, y_val):
+    Z = (X_val - mu) / sigma
+    logits = Z.dot(w) + b
+    
+    # We want to find calib_a that makes correct predictions have ~0.9 confidence if possible
+    # A simple but effective way is to use the Brier score or log loss optimization
+    best_a = 1.0
+    min_loss = 1e9
+    
+    for a in np.linspace(0.5, 10.0, 100):
+        p = 1.0 / (1.0 + np.exp(-a * logits))
+        loss = brier_score_loss(y_val, p)
+        if loss < min_loss:
+            min_loss = loss
+            best_a = a
+            
+    return float(best_a)
 
-def evaluate(mu, sigma, w, b, X, y):
+def evaluate(mu, sigma, w, b, calib_a, X, y):
     Z = (X - mu) / sigma
     margin = Z.dot(w) + b
-    p = 1.0 / (1.0 + np.exp(-margin))
+    p = 1.0 / (1.0 + np.exp(-calib_a * margin))
     auc = roc_auc_score(y, p)
     acc = accuracy_score(y, (p >= 0.5).astype(int))
-    return float(auc), float(acc)
+    # Calculate mean confidence for correct predictions
+    conf = np.where(y == 1, p, 1.0 - p)
+    mean_conf = np.mean(conf)
+    return float(auc), float(acc), float(mean_conf)
 
-
-def save_model(path: str, mu, sigma, w, b):
+def save_model(path: str, mu, sigma, w, b, calib_a):
     obj = {
         "feature_names": FEATURE_NAMES,
         "mu": mu.tolist(),
         "sigma": sigma.tolist(),
         "weights": w.tolist(),
         "bias": float(b),
-        "calib_a": 1.0,
+        "calib_a": calib_a,
         "calib_b": 0.0,
     }
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -149,6 +169,13 @@ def main():
     for p in pbar:
         try:
             f = features_for_path(p, cache_dir=cache_dir)
+            if len(f) != len(FEATURE_NAMES):
+                # Handle cases where feature extraction was incomplete
+                logging.warning(f"Feature mismatch for {p}: got {len(f)}, expected {len(FEATURE_NAMES)}")
+                if len(f) < len(FEATURE_NAMES):
+                    f = np.pad(f, (0, len(FEATURE_NAMES) - len(f)))
+                else:
+                    f = f[:len(FEATURE_NAMES)]
             feats.append(f)
         except Exception as e:
             logging.warning(f"Failed to extract features for {p}: {e}")
@@ -175,12 +202,18 @@ def main():
         split_point = int(round(len(y_tmp) * (args.val_split / max(1e-6, (args.val_split + args.test_split)))))
         X_val, y_val = X_tmp[:split_point], y_tmp[:split_point]
         X_test, y_test = X_tmp[split_point:], y_tmp[split_point:]
-    mu, sigma, w, b = train(X_train, y_train)
-    auc_val, acc_val = evaluate(mu, sigma, w, b, X_val, y_val)
-    auc_test, acc_test = evaluate(mu, sigma, w, b, X_test, y_test)
-    logging.info("Validation AUC %.3f Acc %.3f", auc_val, acc_val)
-    logging.info("Test AUC %.3f Acc %.3f", auc_test, acc_test)
-    save_model(args.output, mu, sigma, w, b)
+    
+    mu, sigma, w, b = train_logistic(X_train, y_train)
+    calib_a = calibrate_temperature(mu, sigma, w, b, X_val, y_val)
+    
+    auc_val, acc_val, conf_val = evaluate(mu, sigma, w, b, calib_a, X_val, y_val)
+    auc_test, acc_test, conf_test = evaluate(mu, sigma, w, b, calib_a, X_test, y_test)
+    
+    logging.info("Validation AUC %.3f Acc %.3f MeanConf %.3f", auc_val, acc_val, conf_val)
+    logging.info("Test AUC %.3f Acc %.3f MeanConf %.3f", auc_test, acc_test, conf_test)
+    logging.info("Calibrated Temperature (calib_a): %.3f", calib_a)
+    
+    save_model(args.output, mu, sigma, w, b, calib_a)
     logging.info("Model saved to %s", args.output)
 
 

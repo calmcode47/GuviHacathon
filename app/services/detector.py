@@ -213,17 +213,43 @@ def _per_channel_features(y_ch: np.ndarray, sr: int) -> Dict[str, float]:
     pauses = _pause_lengths(rms)
     pause_std = float(np.std(pauses)) if len(pauses) > 0 else 0.0
     voiced_ratio = float(f0_clean.size) / float(f0.size + 1e-8)
+    
+    # New: Shimmer (amplitude stability)
+    rms_clean = rms[rms > np.percentile(rms, 10)]
+    shimmer = float(np.std(rms_clean) / (np.mean(rms_clean) + 1e-8)) if rms_clean.size > 0 else 0.0
+    
+    # New: Spectral Flux (rate of change in spectrum)
+    flux = np.sqrt(np.sum(np.diff(mag, axis=1)**2, axis=0))
+    flux_mean = float(np.mean(flux))
+    
+    # New: Syllable Rate (onsets per second)
+    syllable_rate = float(onset_env.size) / (duration if (duration := float(y_f.size)/sr) > 0 else 1.0)
+    onset_env_std = float(np.std(onset_env))
+    
+    # New: MFCC Stability
+    mfcc = librosa.feature.mfcc(S=librosa.amplitude_to_db(mag), sr=sr, n_mfcc=13)
+    mfcc_std = np.std(mfcc, axis=1)
+    mfcc_std_mean = float(np.mean(mfcc_std))
+    
+    # New: F0 Stability (pitch micro-fluctuations)
+    f0_stability = float(np.std(np.diff(f0_clean))) if f0_clean.size > 2 else 0.0
+
     return {
         "pitch_var": pitch_var,
         "jitter_proxy": jitter,
+        "shimmer": shimmer,
         "hnr_ratio": hnr,
         "spectral_flatness_mean": flat_mean,
         "spectral_rolloff_median": roll_median,
+        "spectral_flux_mean": flux_mean,
         "phase_coherence_median": phase_coh_median,
         "energy_entropy_norm": ent,
         "temporal_discontinuity_rate": temporal_rate,
         "prosody_pause_std": pause_std,
-        "prosody_f0_var_median": pitch_var,
+        "syllable_rate": syllable_rate,
+        "onset_env_std": onset_env_std,
+        "mfcc_std_mean": mfcc_std_mean,
+        "f0_stability": f0_stability,
         "voiced_ratio": voiced_ratio,
     }
 

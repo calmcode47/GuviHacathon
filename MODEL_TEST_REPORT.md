@@ -15,8 +15,8 @@
 
 | Case | Prediction | Confidence | Result |
 | :--- | :--- | :--- | :--- |
-| Very short human clip | HUMAN | 0.5399 | ✅ PASS |
-| Noisy human voice | HUMAN | 0.8999 | ✅ PASS |
+| Very short human clip | HUMAN | 0.5400 | ✅ PASS |
+| Noisy human voice | HUMAN | 0.9000 | ✅ PASS |
 | Phone quality human voice | HUMAN | 0.9000 | ✅ PASS |
 
 ## 3. Analysis and Recommendations
