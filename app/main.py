@@ -41,7 +41,10 @@ def get_api_key_from_headers(request: Request) -> Optional[str]:
 
 @app.get("/")
 async def demo_home(request: Request):
-    return templates.TemplateResponse("demo.html", {"request": request})
+    return templates.TemplateResponse("demo.html", {
+        "request": request,
+        "api_key": API_KEY  # Pass the key to the demo UI so it works out of the box
+    })
 
 
 @app.get("/health")
@@ -86,8 +89,8 @@ async def startup_event():
     408: {"model": ErrorResponse},
     500: {"model": ErrorResponse},
 })
-async def voice_detection(payload: dict = Body(...), http_request: Request = None):
-    api_key = get_api_key_from_headers(http_request)
+async def voice_detection(payload: dict = Body(...), request: Request = None):
+    api_key = get_api_key_from_headers(request)
     if not api_key or api_key != API_KEY:
         return JSONResponse(status_code=401, content={"status": "error", "message": "Invalid API key or malformed request", "code": 401})
     try:

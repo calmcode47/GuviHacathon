@@ -384,7 +384,7 @@
                 }
                 const response = await fetch('/api/voice-detection', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'x-api-key': 'sk_test_key' },
+                    headers: { 'Content-Type': 'application/json', 'x-api-key': '{{ api_key }}' },
                     body: JSON.stringify(payload)
                 });
                 
